@@ -1,0 +1,9 @@
+﻿input {
+    border-width: 2px !important;
+}
+
+.autocomplete-suggestions {
+    overflow: auto;
+    border: 1px solid #CBD3DD;
+    background: #FFF;
+}

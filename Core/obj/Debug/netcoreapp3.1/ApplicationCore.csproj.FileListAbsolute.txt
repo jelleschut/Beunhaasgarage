@@ -1,0 +1,9 @@
+C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\bin\Debug\netcoreapp3.1\ApplicationCore.deps.json
+C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\bin\Debug\netcoreapp3.1\ApplicationCore.dll
+C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\bin\Debug\netcoreapp3.1\ApplicationCore.pdb
+C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\ApplicationCore.csprojAssemblyReference.cache
+C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\ApplicationCore.AssemblyInfoInputs.cache
+C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\ApplicationCore.AssemblyInfo.cs
+C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\ApplicationCore.csproj.CoreCompileInputs.cache
+C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\ApplicationCore.dll
+C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\ApplicationCore.pdb

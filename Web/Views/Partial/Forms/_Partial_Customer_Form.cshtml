@@ -1,0 +1,75 @@
+﻿@model Core.Models.Customer
+
+<form id="@Model.GetType().Name.ToLower()-form" class="pt-3 border border-top-0 rounded-bottom">
+    <div class="container">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="d-none">
+            <label asp-for="Id" class="control-label"></label>
+            <input id="@Model.GetType().Name.ToLower()-id" asp-for="Id" class="form-control" />
+            <span asp-validation-for="Id" class="text-danger"></span>
+        </div>
+        <div class="form-row">
+            <div class="col-md-4">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input id="@Model.GetType().Name.ToLower()-firstname" asp-for="FirstName" class="form-control" placeholder="John" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="offset-md-1 col-md-1">
+                <label asp-for="Infix" class="control-label"></label>
+                <input id="@Model.GetType().Name.ToLower()-infix" asp-for="Infix" class="form-control" placeholder="" />
+                <span asp-validation-for="Infix" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="LastName" class="control-label"></label>
+                <input id="@Model.GetType().Name.ToLower()-lastname" asp-for="LastName" class="form-control" placeholder="Doe" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-4">
+                <label asp-for="Street" class="control-label"></label>
+                <input id="@Model.GetType().Name.ToLower()-street" asp-for="Street" class="form-control" />
+                <span asp-validation-for="Street" class="text-danger"></span>
+            </div>
+            <div class="offset-md-1 col-md-1">
+                <label asp-for="HouseNumber" class="control-label"></label>
+                <input id="@Model.GetType().Name.ToLower()-housenumber" asp-for="HouseNumber" class="form-control" />
+                <span asp-validation-for="HouseNumber" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-2">
+                <label asp-for="Zipcode" class="control-label"></label>
+                <input id="@Model.GetType().Name.ToLower()-zipcode" asp-for="Zipcode" class="form-control" />
+                <span asp-validation-for="Zipcode" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="City" class="control-label"></label>
+                <input id="@Model.GetType().Name.ToLower()-city" asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-row form-group">
+            <div class="col-md-4">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input id="@Model.GetType().Name.ToLower()-phonenumber" asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="offset-md-2 col-md-4">
+                <label asp-for="Email" class="control-label"></label>
+                <input id="@Model.GetType().Name.ToLower()-email" asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div id="@Model.GetType().Name.ToLower()-btn-group" class="offset-md-1 col-md-1 d-flex">
+                <button id="@Model.GetType().Name.ToLower()-save-btn" type="button" class="btn btn-success mt-auto" >Save</button>
+                <button id="@Model.GetType().Name.ToLower()-edit-btn" type="button" class="btn btn-danger d-none mt-auto">Edit</button>
+                <div class="btn-group">
+                    <button id="@Model.GetType().Name.ToLower()-update-btn" type="button" value="Update" class="btn btn-success d-none mt-auto">Update</button>
+                    <button id="@Model.GetType().Name.ToLower()-cancel-btn" type="button" value="Cancel" class="btn btn-danger d-none mt-auto">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

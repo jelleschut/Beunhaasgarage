@@ -1,0 +1,13 @@
+﻿@model Core.Models.Customer
+
+@{
+    ViewData["Title"] = "Customer Details";
+}
+
+<h1>Customer Details</h1>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<partial name="~/Views/Partial/Headers/_Partial_Form_Header.cshtml"/>
+<partial name="~/Views/Partial/Forms/_Partial_Customer_Form.cshtml" />

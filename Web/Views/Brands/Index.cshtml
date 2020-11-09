@@ -1,0 +1,135 @@
+﻿@model IEnumerable<Core.Models.Model>
+
+@{
+    ViewData["Title"] = "Brands";
+}
+
+<h1>Brands</h1>
+
+<partial name="~/Views/Partial/Search/_Partial_Index_Search.cshtml" />
+
+<table class="table table-striped table-hover table-sm">
+    <thead class="thead-dark">
+        <tr class="d-flex">
+            <th class="col-2">
+                <a class="text-light font-weight-bold" asp-action="Index" asp-route-order="@ViewData["BrandSortParm"]">@Html.DisplayNameFor(model => model.Brand.Name)</a>
+            </th>
+            <th class="col-10">
+                <a class="text-light font-weight-bold" asp-action="Index" asp-route-order="@ViewData["ModelSortParm"]">@Html.DisplayNameFor(model => model.Name)</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody class="border">
+        @foreach (var item in Model.Select(m => m.Brand).Distinct())
+        {
+            <tr class="d-flex">
+                <td id="@item.Id" class="col-12">
+                    <span>@Html.ActionLink(item.Name, "Edit", new { id = item.Id })</span>
+                    <div class="float-right">
+                        <button id="@item.Name-edit-link" class="edit-btn btn btn-sm btn-link">Edit</button>
+                    </div>
+                    <div class="input-group input-group-sm d-none">
+                        <input type="text" value="@item.Name">
+                        <div class="input-group-append">
+                            <button id="save-btn-@item.Name" name="@item.Id" class="btn btn-success save-btn-brand" type="button">Save</button>
+                        </div>
+                        <div class="input-group-append">
+                            <button id="cancel-btn-@item.Name" class="btn btn-danger cancel-btn" type="button">Cancel</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            @foreach (var item2 in Model.Where(m => m.Brand == item))
+            {
+                <tr class="d-flex">
+                    <td class="offset-2 col-10">
+                        <span id="@item2.Id">@item2.Name</span>
+                        <div class="float-right">
+                            <button id="@item.Name-@item2.Name-edit-link" class="edit-btn btn btn-sm btn-link">Edit</button> |
+                            <button id="@item.Name-@item2.Name-add-link" class="add-btn btn btn-sm btn-link">Add</button>
+                        </div>
+                        <div class="input-group input-group-sm d-none">
+                            <input type="text" value="@item2.Name" >
+                            <div class="input-group-append">
+                                <button id="save-btn-@item.Name-@item2.Name" name="@item2.Id" class="btn btn-success save-btn-model" type="button">Save</button>
+                            </div>
+                            <div class="input-group-append">
+                                <button id="cancel-btn-@item.Name-@item2.Name" name="@item2.Id" class="btn btn-danger cancel-btn" type="button">Cancel</button>
+                            </div>
+                        </div>
+                        
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        $(document).ready(function() {
+
+            $('.edit-btn').click(function() {
+                $(this).parent().addClass('d-none');
+                $(this).parent().prev().addClass('d-none');
+                $(this).parent().next().removeClass('d-none');
+                $(this).parent().next().select();
+            });
+
+            $('.save-btn-model').click(function () {
+                let id = parseInt($(this).attr('name'));
+                let modelName = $(this).attr('id').split('-')[3];
+
+                $.ajax({
+                    url: 'Api/ModelsApiEndpoint/' + id + '/' + modelName,
+                    method: 'PUT',
+                    data: name,
+                    dataType: 'JSON',
+                    contentType: 'application/json',
+                    success: (data) => {
+                        console.log('succes');
+                        console.log(data);
+                    },
+                    error: (data) => {
+                        console.log(data);
+                    },
+                });
+                hideEdit(this);
+            });
+
+            $('.save-btn-brand').click(function () {
+                let id = parseInt($(this).attr('name'));
+                let name = $(this).attr('id').split('-')[2];
+                let Brand = {
+                    Id: id,
+                    Name: name
+                }
+
+                $.ajax({
+                    url: 'Api/BrandsApiEndpoint/' + id,
+                    method: 'PUT',
+                    data: JSON.stringify(Brand),
+                    dataType: 'JSON',
+                    contentType: 'application/json',
+                    success: (data) => {
+                        console.log('succes');
+                        console.log(data);
+                    },
+                    error: (data) => {
+                        console.log(data);
+                    },
+                });
+                hideEdit(this);
+            });
+
+            $('.cancel-btn').click(function() { hideEdit(this) });
+
+            function hideEdit(element) {
+                $(element).parent().parent().addClass('d-none');
+                $(element).parent().parent().prev().removeClass('d-none');
+                $(element).parent().parent().prev().prev().removeClass('d-none');
+            };
+        });
+    </script>
+}
+

@@ -11,23 +11,24 @@ namespace Web.Controllers
 {
     public class MaintenanceSpecificationsController : Controller
     {
-        private readonly IMaintenanceSpecificationRepository _msRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public MaintenanceSpecificationsController(IMaintenanceSpecificationRepository msRepository)
+        public MaintenanceSpecificationsController(IUnitOfWork unitOfWork)
         {
-            _msRepository = msRepository;
+            _unitOfWork = unitOfWork;
         }
+
         // GET: MaintenanceSpecificationsController
         public ActionResult  Index()
         {
-            List<MaintenanceSpecification> msList = _msRepository.GetAllMaintenanceSpecifications();
+            IEnumerable<MaintenanceSpecification> msList =_unitOfWork.MaintenanceSpecifications.GetAll();
             return View(msList);
         }
 
         // GET: MaintenanceSpecificationsController/Details/5
         public ActionResult Details(int id)
         {
-            MaintenanceSpecification ms = _msRepository.GetMaintenanceSpecification(id);
+            MaintenanceSpecification ms =_unitOfWork.MaintenanceSpecifications.GetById(id);
             return View(ms);
         }
 
@@ -40,7 +41,7 @@ namespace Web.Controllers
         // POST: MaintenanceSpecificationsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("Milage,Description,Type,Car,Driver,Status")] MaintenanceSpecification ms)
+        public ActionResult Create([Bind("Milage,Description,MaintenanceType,Car,Driver,Status")] MaintenanceSpecification ms)
         {
             if (!ModelState.IsValid)
             {
@@ -49,7 +50,7 @@ namespace Web.Controllers
 
             try
             {
-                _msRepository.AddMaintenanceSpecification(ms);
+               _unitOfWork.MaintenanceSpecifications.Add(ms);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -61,14 +62,14 @@ namespace Web.Controllers
         // GET: MaintenanceSpecificationsController/Edit/5
         public ActionResult Edit(int id)
         {
-            MaintenanceSpecification ms = _msRepository.GetMaintenanceSpecification(id);
+            MaintenanceSpecification ms =_unitOfWork.MaintenanceSpecifications.GetById(id);
             return View(ms);
         }
 
         // POST: MaintenanceSpecificationsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, [Bind("Milage,Description,Type,Car,Driver,Status")] MaintenanceSpecification ms)
+        public ActionResult Edit([Bind("MaintenanceSpecificationId,Milage,Description,Type,Car,Driver,Status")] MaintenanceSpecification ms)
         {
             if (!ModelState.IsValid)
             {
@@ -77,7 +78,7 @@ namespace Web.Controllers
 
             try
             {
-                _msRepository.EditMaintenanceSpecification(id, ms);
+               _unitOfWork.MaintenanceSpecifications.Update(ms);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -97,12 +98,12 @@ namespace Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Delete")]
-        public ActionResult DeletePost(int id)
+        public ActionResult DeletePost([Bind("MaintenanceSpecificationId,Milage,Description,Type,Car,Driver,Status")] MaintenanceSpecification ms)
         {
 
             try
             {
-                _msRepository.DeleteMaintenanceSpecification(id);
+               _unitOfWork.MaintenanceSpecifications.Remove(ms);
                 return RedirectToAction(nameof(Index));
             }
             catch

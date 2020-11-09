@@ -28,7 +28,7 @@ using Web.ViewModels;
 #nullable disable
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"1a632af98c3cb4325cd58fa38006ea5a36f34ab6", @"/Views/Partial/Forms/_Partial_Customer_Form.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"ae3211996784a65c9fa1ff826bb54959fd1a4755", @"/Views/_ViewImports.cshtml")]
-    public class Views_Partial_Forms__Partial_Customer_Form : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<Core.Models.Customer>
+    public class Views_Partial_Forms__Partial_Customer_Form : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<Core.Models.Owner>
     {
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_0 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("class", new global::Microsoft.AspNetCore.Html.HtmlString("text-danger"), global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_1 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("class", new global::Microsoft.AspNetCore.Html.HtmlString("control-label"), global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
@@ -944,7 +944,7 @@ AddHtmlAttributeValue("", 41, Model.GetType().Name.ToLower(), 41, 31, false);
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.Rendering.IJsonHelper Json { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
-        public global::Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<Core.Models.Customer> Html { get; private set; }
+        public global::Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<Core.Models.Owner> Html { get; private set; }
     }
 }
 #pragma warning restore 1591

@@ -13,7 +13,7 @@ namespace Web.Controllers
         public IActionResult Index()
         {
             RegistrationViewModel registrationViewModel = new RegistrationViewModel();
-            registrationViewModel.Customer = new Customer();
+            registrationViewModel.Customer = new Owner();
             registrationViewModel.Car = new Car();
             registrationViewModel.Maintenance = new MaintenanceSpecification();
             return View(registrationViewModel);

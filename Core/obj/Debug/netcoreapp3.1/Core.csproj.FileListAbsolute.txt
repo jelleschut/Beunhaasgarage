@@ -4,6 +4,9 @@ C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Cor
 C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\Core.csprojAssemblyReference.cache
 C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\Core.AssemblyInfoInputs.cache
 C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\Core.AssemblyInfo.cs
-C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\Core.csproj.CoreCompileInputs.cache
 C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\Core.dll
 C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\Core.pdb
+C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\Core.csproj.CoreCompileInputs.cache
+C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\bin\Debug\netcoreapp3.1\Core.runtimeconfig.json
+C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\bin\Debug\netcoreapp3.1\Core.runtimeconfig.dev.json
+C:\Users\SCHUB05\Documents\InfoSupport\Projects\Blok1Opdracht\Beunhaasgarage\Core\obj\Debug\netcoreapp3.1\Core.genruntimeconfig.cache

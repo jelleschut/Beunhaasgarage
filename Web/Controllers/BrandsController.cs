@@ -10,13 +10,11 @@ namespace Web.Controllers
 {
     public class BrandsController : Controller
     {
-        private readonly IBrandRepository _brandRepository;
-        private readonly IModelRepository _modelRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public BrandsController(IBrandRepository brandRepository, IModelRepository modelRepository)
+        public BrandsController(IUnitOfWork unitOfWork)
         {
-            _brandRepository = brandRepository;
-            _modelRepository = modelRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: BrandsController
@@ -29,7 +27,7 @@ namespace Web.Controllers
             ViewData["CurrenstOrder"] = order;
 
             var models = from m
-                         in _modelRepository.GetAllModels()
+                         in _unitOfWork.Models.GetAll()
                          select m;
 
             if (search != null)

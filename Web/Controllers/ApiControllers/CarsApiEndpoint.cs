@@ -15,56 +15,78 @@ namespace Web.Controllers.ApiControllers
     [ApiController]
     public class CarsApiEndpoint : ControllerBase
     {
-        private readonly ICarRepository _carRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CarsApiEndpoint(ICarRepository carRepository)
+        public CarsApiEndpoint(IUnitOfWork unitOfWork)
         {
-            _carRepository = carRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
-        public List<Car> Get()
+        public IActionResult Get()
         {
-            return _carRepository.GetAllCars();
+            var result = _unitOfWork.Cars.GetAll();
+            return Ok(result);
         }
 
         //GET api/<CarsApiEndpoint>/5
         [HttpGet("{id}")]
-        public Car Get(int id)
+        public IActionResult Get(int id)
         {
-            return _carRepository.GetCar(id);
+            if (CarExists(id))
+            {
+                var result = _unitOfWork.Cars.GetById(id);
+                return Ok(result);
+            }
+            return NotFound(id);
         }
 
         // POST api/<CarsApiEndpoint>
         [HttpPost]
-        public void Post([FromForm] [Bind(Prefix ="Car")] Car car)
+        public IActionResult Post(Car car)
         {
-            _carRepository.AddCar(car);
+            _unitOfWork.Cars.Add(car);
+            _unitOfWork.Complete();
+            return Ok(car);
         }
 
         // PUT api/<CarsApiEndpoint>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromForm][Bind(Prefix = "Car")] Car car)
+        //public void Put(int id, [FromForm][Bind(Prefix = "Car")] Car car)
+        //{
+        //    if(CarExists(id))
+        //    {
+        //        _carRepository.EditCar(id, car);
+        //    }
+        //}
+
+        public IActionResult Put(int id, Car car)
         {
-            if(CarExists(id))
+            if (CarExists(id))
             {
-                _carRepository.EditCar(id, car);
+                _unitOfWork.Cars.Update(car);
+                _unitOfWork.Complete();
+                return Ok(car);
             }
+            return NotFound(id);
         }
 
         // DELETE api/<CarsApiEndpoint>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
             if (CarExists(id))
             {
-                _carRepository.DeleteCar(id);
+                _unitOfWork.Cars.Remove(_unitOfWork.Cars.GetById(id));
+                _unitOfWork.Complete();
+                return NoContent();
             }
+            return NotFound(id);
         }
 
         private bool CarExists(int id)
         {
-            return _carRepository.GetCar(id) != null;
+            return _unitOfWork.Cars.GetById(id) != null;
         }
     }
 }

@@ -7,12 +7,11 @@ namespace Core.Models
 {
     public class Model
     {
-        [Key]
-        public int Id { get; set; }
-        [Required]
-        [DataType(DataType.Text)]
+        public int ModelId { get; set; }
         public string Name { get; set; }
-        [Required]
-        public Brand Brand { get; set; }
+
+        //Navigation Properties
+        public virtual Brand Brand { get; set; }
+        public virtual List<Car> Cars { get; set; }
     }
 }

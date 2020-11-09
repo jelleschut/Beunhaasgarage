@@ -14,69 +14,102 @@ namespace Web.Controllers.ApiControllers
     [ApiController]
     public class ModelsApiEndpoint : ControllerBase
     {
-        private readonly IModelRepository _modelRepository;
-        public ModelsApiEndpoint(IModelRepository modelRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public ModelsApiEndpoint(IUnitOfWork unitOfWork)
         {
-            _modelRepository = modelRepository;
+            _unitOfWork = unitOfWork;
         }
+
         // GET: api/<ModelsController>
-        [HttpGet("Brand/{BrandId}")]
-        public IEnumerable<Model> GetByBrand(int brandId)
+        [HttpGet]
+        public IActionResult Get()
         {
-            return _modelRepository.GetModelsByBrand(brandId);
+            var result = _unitOfWork.Models.GetAll();
+            return Ok(result);
         }
 
         // GET api/<ModelsController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult Get(int id)
         {
-            return "value";
+            if (ModelExists(id))
+            {
+                var result = _unitOfWork.Models.GetById(id);
+                return Ok(result);
+            }
+            return NotFound(id);
         }
 
-        [HttpGet]
-        public IEnumerable<Model> Get()
-        {
-            return _modelRepository.GetAllModels();
-        }
+        // GET api/<ModelsController>/5
+        //[HttpGet("{id}")]
+        //public string Get(int id)
+        //{
+        //    return "value";
+        //}
 
         // POST api/<ModelsController>
         [HttpPost]
-        public void Post([FromBody] Model model)
+        public IActionResult Post(Brand brand)
         {
-            _modelRepository.EditModel(model.Id, model);
-
+            _unitOfWork.Brands.Add(brand);
+            _unitOfWork.Complete();
+            return Ok(brand);
         }
 
-        [HttpPut("{id}/{modelName}")]
-        public void Put(int id, string modelName)
-        {
-            _modelRepository.EditModel(id, modelName);
-        }
-
+        // POST api/<ModelsController>
+        //[HttpPost]
+        //public void Post([FromBody] Model model)
+        //{
+        //    _modelRepository.EditModel(model.Id, model);
+        //}
 
         // PUT api/<ModelsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromForm] Model model)
+        public IActionResult Put(int id, Model model)
         {
             if (ModelExists(id))
             {
-                _modelRepository.EditModel(id, model);
+                _unitOfWork.Models.Update(model);
+                _unitOfWork.Complete();
+                return Ok(model);
             }
+            return NotFound(id);
         }
+
+        // PUT api/<ModelsController>/5/name
+        //[HttpPut("{id}/{modelName}")]
+        //public void Put(int id, string modelName)
+        //{
+        //    _modelRepository.EditModel(id, modelName);
+        //}
+
+
+        // PUT api/<ModelsController>/5
+        //[HttpPut("{id}")]
+        //public void Put(int id, [FromForm] Model model)
+        //{
+        //    if (ModelExists(id))
+        //    {
+        //        _modelRepository.EditModel(id, model);
+        //    }
+        //}
 
         // DELETE api/<ModelsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
             if (ModelExists(id))
             {
-                _modelRepository.DeleteModel(id);
+                _unitOfWork.Models.Remove(_unitOfWork.Models.GetById(id));
+                _unitOfWork.Complete();
+                return NoContent();
             }
+            return NotFound(id);
         }
 
         private bool ModelExists(int id)
         {
-            return _modelRepository.GetModel(id) != null;
+            return _unitOfWork.Models.GetById(id) != null;
         }
     }
 }

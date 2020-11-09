@@ -5,12 +5,7 @@ using System.Text;
 
 namespace Core.Interfaces
 {
-    public interface IBrandRepository
+    public interface IBrandRepository : IGenericRepository<Brand>
     {
-        void AddBrand(Brand brand);
-        List<Brand> GetAllBrands();
-        Brand GetBrand(int id);
-        void EditBrand(int id, Brand brand);
-        void DeleteBrand(int id);
     }
 }

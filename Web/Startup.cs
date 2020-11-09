@@ -9,8 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Core.Interfaces;
-using Core.Repositories;
 using Web.Controllers.ApiControllers;
+using DataAccessLayer.Repositories;
+using DataAccessLayer.UnitOfWork;
 
 namespace Web
 {
@@ -26,12 +27,12 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<ICarRepository, CarRepository>();
-            services.AddScoped<ICustomerRepository, CustomerRepository>();
-            services.AddScoped<IMaintenanceSpecificationRepository, MaintenanceSpecificationRepository>();
-            services.AddScoped<IBrandRepository, BrandRepository>();
-            services.AddScoped<IModelRepository, ModelRepository>();
-            services.AddScoped<ILeaseCompanyRepository, LeaseCompanyRepository>();
+            services.AddSingleton<ICarRepository, CarRepository>();
+            services.AddSingleton<IOwnerRepository, OwnerRepository>();
+            services.AddSingleton<IMaintenanceSpecificationRepository, MaintenanceSpecificationRepository>();
+            services.AddSingleton<IBrandRepository, BrandRepository>();
+            services.AddSingleton<IModelRepository, ModelRepository>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddControllersWithViews();
         }
 

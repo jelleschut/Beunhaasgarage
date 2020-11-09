@@ -8,10 +8,11 @@ namespace Core.Models
 {
     public class Brand
     {
-        [Key]
-        public int Id { get; set; }
-        [Required]
-        [DataType(DataType.Text)]
+        public int BrandId { get; set; }
         public string Name { get; set; }
+
+        //Navigation Properties
+        public virtual List<Model> Models { get; set; }
+        public virtual List<Car> Cars { get; set; }
     }
 }

@@ -10,22 +10,17 @@ namespace Core.Models
 {
     public class Car
     {
-        [Key]
-        public int Id { get; set; }
-        [Required]
-        [MaxLength(8)]
-        [DataType(DataType.Text)]
+        public int CarId { get; set; }
+
         [DisplayName("Licensenumber")]
         public string LicenseNumber { get; set; }
-        [Required]
-        public Brand Brand { get; set; }
-        [Required]
-        public Model Model { get; set; }
-        [Required]
-        public IOwner Owner { get; set; }
-        [Required]
-        public Customer Customer { get; set; }
         public StatusEnum Status { get; set; }
 
+        //Navigation Properties
+        public virtual Brand Brand { get; set; }
+        public virtual Model Model { get; set; }
+        public virtual Owner Owner { get; set; }
+        public virtual Owner Customer { get; set; }
+        public virtual List<MaintenanceSpecification> MaintenanceSpecifications { get; set; }
     }
 }

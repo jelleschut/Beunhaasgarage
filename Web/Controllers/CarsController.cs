@@ -12,10 +12,10 @@ namespace Web.Controllers
 {
     public class CarsController : Controller
     {
-        private readonly ICarRepository _carRepository;
-        public CarsController(ICarRepository carRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public CarsController(IUnitOfWork unitOfWork)
         {
-            _carRepository = carRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: CarsController
@@ -32,7 +32,7 @@ namespace Web.Controllers
 
 
             var cars = from c
-                       in _carRepository.GetAllCars()
+                       in _unitOfWork.Cars.GetAll()
                        select c;
 
             if (search != null)
@@ -64,7 +64,7 @@ namespace Web.Controllers
         // GET: CarsController/Details/5
         public ActionResult Details(int id)
         {
-            Car car = _carRepository.GetCar(id);
+            Car car = _unitOfWork.Cars.GetById(id);
             return View(car);
         }
 
@@ -87,7 +87,7 @@ namespace Web.Controllers
 
             try
             {
-                _carRepository.AddCar(car);
+                _unitOfWork.Cars.Add(car);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -99,14 +99,14 @@ namespace Web.Controllers
         // GET: CarsController/Edit/5
         public ActionResult Edit(int id)
         {
-            Car car = _carRepository.GetCar(id);
+            Car car = _unitOfWork.Cars.GetById(id);
             return View(car);
         }
 
         // POST: CarsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, [Bind("LicenseNumber,Brand,Model,Owner,Driver")] Car car)
+        public ActionResult Edit([Bind("CarId,LicenseNumber,Brand,Model,Owner,Driver")] Car car)
         {
 
             if (!ModelState.IsValid)
@@ -116,7 +116,7 @@ namespace Web.Controllers
 
             try
             {
-                _carRepository.EditCar(id, car);
+                _unitOfWork.Cars.Update(car);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -129,7 +129,7 @@ namespace Web.Controllers
         [ActionName("Delete")]
         public ActionResult DeleteGet(int id)
         {
-            Car car = _carRepository.GetCar(id);
+            Car car = _unitOfWork.Cars.GetById(id);
             return View(car);
         }
 
@@ -137,11 +137,11 @@ namespace Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Delete")]
-        public ActionResult DeletePost(int id)
+        public ActionResult DeletePost([Bind("CarId,LicenseNumber,Brand,Model,Owner,Driver")] Car car)
         {
             try
             {
-                _carRepository.DeleteCar(id);
+                _unitOfWork.Cars.Remove(car);
                 return RedirectToAction(nameof(Index));
             }
             catch

@@ -15,59 +15,72 @@ namespace Web.Controllers.ApiControllers
     public class MaintenanceSpecificationsApiEndpoint : ControllerBase
     {
 
-        private readonly IMaintenanceSpecificationRepository _msRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public MaintenanceSpecificationsApiEndpoint(IMaintenanceSpecificationRepository msRepository)
+        public MaintenanceSpecificationsApiEndpoint(IUnitOfWork unitOfWork)
         {
-            _msRepository = msRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/<MaintenanceSpecificationsApiEndpoint>
         [HttpGet]
-        public IEnumerable<MaintenanceSpecification> Get()
+        public IActionResult Get()
         {
-            return _msRepository.GetAllMaintenanceSpecifications();
+            var result = _unitOfWork.MaintenanceSpecifications.GetAll();
+            return Ok(result);
         }
 
         // GET api/<MaintenanceSpecificationsApiEndpoint>/5
         [HttpGet("{id}")]
-        public MaintenanceSpecification Get(int id)
+        public IActionResult Get(int id)
         {
-            return _msRepository.GetMaintenanceSpecification(id);
+            if (MaintenanceSpecificationExists(id))
+            {
+                var result = _unitOfWork.MaintenanceSpecifications.GetById(id);
+                return Ok(result);
+            }
+            return NotFound(id);
         }
 
         // POST api/<MaintenanceSpecificationsApiEndpoint>
         [HttpPost]
-        public void Post([FromForm][Bind(Prefix = "MaintenanceSpecification")] MaintenanceSpecification ms)
+        public IActionResult Post(MaintenanceSpecification ms)
         {
-            _msRepository.AddMaintenanceSpecification(ms);
+            _unitOfWork.MaintenanceSpecifications.Add(ms);
+            _unitOfWork.Complete();
+            return Ok(ms);
         }
 
         // PUT api/<MaintenanceSpecificationsApiEndpoint>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromForm][Bind(Prefix = "MaintenanceSpecification")] MaintenanceSpecification ms)
+        public IActionResult Put(int id, MaintenanceSpecification ms)
         {
-            if (MSExists(id))
+            if (MaintenanceSpecificationExists(id))
             {
-                _msRepository.EditMaintenanceSpecification(id, ms);
+                _unitOfWork.MaintenanceSpecifications.Update(ms);
+                _unitOfWork.Complete();
+                return Ok(ms);
             }
-
+            return NotFound(id);
         }
+
 
         // DELETE api/<MaintenanceSpecificationsApiEndpoint>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
-            if (MSExists(id))
+            if (MaintenanceSpecificationExists(id))
             {
-                _msRepository.DeleteMaintenanceSpecification(id);
+                _unitOfWork.MaintenanceSpecifications.Remove(_unitOfWork.MaintenanceSpecifications.GetById(id));
+                _unitOfWork.Complete();
+                return NoContent();
             }
-
+            return NotFound(id);
         }
 
-        private bool MSExists(int id)
+        private bool MaintenanceSpecificationExists(int id)
         {
-            return _msRepository.GetMaintenanceSpecification(id) != null;
+            return _unitOfWork.MaintenanceSpecifications.GetById(id) != null;
         }
     }
 }

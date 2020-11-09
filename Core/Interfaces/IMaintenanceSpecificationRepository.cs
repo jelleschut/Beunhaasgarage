@@ -5,12 +5,7 @@ using Core.Models;
 
 namespace Core.Interfaces
 {
-    public interface IMaintenanceSpecificationRepository
+    public interface IMaintenanceSpecificationRepository : IGenericRepository<MaintenanceSpecification>
     {
-        void AddMaintenanceSpecification(MaintenanceSpecification ms);
-        List<MaintenanceSpecification> GetAllMaintenanceSpecifications();
-        MaintenanceSpecification GetMaintenanceSpecification(int id);
-        void EditMaintenanceSpecification(int id, MaintenanceSpecification ms);
-        void DeleteMaintenanceSpecification(int id);
     }
 }

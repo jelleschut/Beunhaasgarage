@@ -8,7 +8,7 @@ namespace Web.ViewModels
 {
     public class RegistrationViewModel
     {
-        public Customer Customer { get; set; }
+        public Owner Customer { get; set; }
         public Car Car { get; set; }
         public MaintenanceSpecification Maintenance { get; set; }
     }

@@ -7,21 +7,16 @@ using System.Text;
 
 namespace Core.Models
 {
-    [DisplayName("Maintenance Specifiation")]
+    [DisplayName("Maintenance Specification")]
     public class MaintenanceSpecification
     {
-        [Key]
-        public int Id { get; set; }
-        [Required]
-        [DataType(DataType.Date)]
+        public int MaintenanceSpecificationId { get; set; }
         public DateTime Date { get; set; }
-        [Required]
         public int Milage { get; set; }
-        [DataType(DataType.Text)]
         public string Description { get; set; }
-        [Required]
-        public MaintenanceTypeEnum Type { get; set; }
-        [Required]
-        public Car Car { get; set; }
+        public MaintenanceTypeEnum MaintenanceType { get; set; }
+
+        //Navigation Properties
+        public virtual Car Car { get; set; }
     }
 }

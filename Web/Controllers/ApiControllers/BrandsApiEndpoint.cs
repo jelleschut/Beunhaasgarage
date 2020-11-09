@@ -14,54 +14,71 @@ namespace Web.Controllers.ApiControllers
     [ApiController]
     public class BrandsApiEndpoint : ControllerBase
     {
+        private readonly IUnitOfWork _unitOfWork;
 
-        private readonly IBrandRepository _brandRepository;
-
-        public BrandsApiEndpoint(IBrandRepository brandRepository)
+        public BrandsApiEndpoint(IUnitOfWork unitOfWork)
         {
-            _brandRepository = brandRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/<BrandsController>
         [HttpGet]
-        public List<Brand> Get()
+        public IActionResult Get()
         {
-            return _brandRepository.GetAllBrands();
+            var result = _unitOfWork.Brands.GetAll();
+            return Ok(result);
         }
 
         // GET api/<BrandsController>/5
         [HttpGet("{id}")]
-        public Brand Get(int id)
+        public IActionResult Get(int id)
         {
-            return _brandRepository.GetBrand(id);
+            if(BrandExists(id))
+            {
+                var result = _unitOfWork.Brands.GetById(id);
+                return Ok(result);
+            }
+            return NotFound(id);
         }
 
         // POST api/<BrandsController>
         [HttpPost]
-        public void Post(Brand brand)
+        public IActionResult Post(Brand brand)
         {
-            _brandRepository.AddBrand(brand);
+            _unitOfWork.Brands.Add(brand);
+            _unitOfWork.Complete();
+            return Ok(brand);
         }
 
         // PUT api/<BrandsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, Brand brand)
+        public IActionResult Put(int id, Brand brand)
         {
             if (BrandExists(id))
             {
-                _brandRepository.EditBrand(id, brand);
+                _unitOfWork.Brands.Update(brand);
+                _unitOfWork.Complete();
+                return Ok(brand);
             }
+            return NotFound(id);
         }
 
         // DELETE api/<BrandsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            if(BrandExists(id))
+            {
+                _unitOfWork.Brands.Remove(_unitOfWork.Brands.GetById(id));
+                _unitOfWork.Complete();
+                return NoContent();
+            }
+            return NotFound(id);
         }
 
         private bool BrandExists(int id)
         {
-            return _brandRepository.GetBrand(id) != null;
+            return _unitOfWork.Brands.GetById(id) != null;
         }
     }
 }

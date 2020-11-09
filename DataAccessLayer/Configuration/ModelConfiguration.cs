@@ -11,6 +11,9 @@ namespace DataAccessLayer.Configuration
     {
         public void Configure(EntityTypeBuilder<Model> builder)
         {
+            builder.Property(m => m.ModelId)
+                .ValueGeneratedOnAdd();
+
             builder.Property(m => m.Name)
                 .IsRequired();
 
@@ -20,12 +23,12 @@ namespace DataAccessLayer.Configuration
 
             builder.
                 HasData(
-                new { Name = "A4", BrandId = 1},
-                new { Name = "M6", BrandId = 2},
-                new { Name = "Punto", BrandId = 3},
-                new { Name = "Clio", BrandId = 4},
-                new { Name = "Superb", BrandId = 5},
-                new { Name = "Golf", BrandId = 6}
+                new { ModelId = 1, Name = "A4", BrandId = 1},
+                new { ModelId = 2, Name = "M6", BrandId = 2},
+                new { ModelId = 3, Name = "Punto", BrandId = 3},
+                new { ModelId = 4, Name = "Clio", BrandId = 4},
+                new { ModelId = 5, Name = "Superb", BrandId = 5},
+                new { ModelId = 6, Name = "Golf", BrandId = 6}
                 );
         }
     }

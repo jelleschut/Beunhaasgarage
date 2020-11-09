@@ -20,7 +20,7 @@ namespace Core.Models
         public virtual Brand Brand { get; set; }
         public virtual Model Model { get; set; }
         public virtual Owner Owner { get; set; }
-        public virtual Owner Customer { get; set; }
+        public virtual Owner Driver { get; set; }
         public virtual List<MaintenanceSpecification> MaintenanceSpecifications { get; set; }
     }
 }

@@ -12,6 +12,7 @@ using Core.Interfaces;
 using Web.Controllers.ApiControllers;
 using DataAccessLayer.Repositories;
 using DataAccessLayer.UnitOfWork;
+using DataAccessLayer;
 
 namespace Web
 {
@@ -27,11 +28,12 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<ICarRepository, CarRepository>();
-            services.AddSingleton<IOwnerRepository, OwnerRepository>();
-            services.AddSingleton<IMaintenanceSpecificationRepository, MaintenanceSpecificationRepository>();
-            services.AddSingleton<IBrandRepository, BrandRepository>();
-            services.AddSingleton<IModelRepository, ModelRepository>();
+            services.AddDbContext<GarageContext>();
+            services.AddTransient<ICarRepository, CarRepository>();
+            services.AddTransient<IOwnerRepository, OwnerRepository>();
+            services.AddTransient<IMaintenanceSpecificationRepository, MaintenanceSpecificationRepository>();
+            services.AddTransient<IBrandRepository, BrandRepository>();
+            services.AddTransient<IModelRepository, ModelRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddControllersWithViews();
         }

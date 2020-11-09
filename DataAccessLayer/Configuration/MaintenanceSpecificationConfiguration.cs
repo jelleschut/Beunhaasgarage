@@ -12,6 +12,9 @@ namespace DataAccessLayer.Configuration
     {
         public void Configure(EntityTypeBuilder<MaintenanceSpecification> builder)
         {
+            builder.Property(ms => ms.MaintenanceSpecificationId)
+                .ValueGeneratedOnAdd();
+
             builder.Property(ms => ms.Date)
                 .IsRequired();
 
@@ -30,12 +33,12 @@ namespace DataAccessLayer.Configuration
                 .WithMany(c => c.MaintenanceSpecifications);
 
             builder.HasData(
-                new { Date = DateTime.Now, Milage = 1234567890, Description = "Reparatie", Type = MaintenanceTypeEnum.REPAIR, CarId = 1 },
-                new { Date = DateTime.Now, Milage = 1234567890, Description = "Reparatie", Type = MaintenanceTypeEnum.REPAIR, CarId = 2 },
-                new { Date = DateTime.Now, Milage = 1234567890, Description = "Reparatie", Type = MaintenanceTypeEnum.REPAIR, CarId = 3 }, 
-                new { Date = DateTime.Now, Milage = 1234567890, Description = "APK", Type = MaintenanceTypeEnum.MOT, CarId = 4, Id = 4 },
-                new { Date = DateTime.Now, Milage = 1234567890, Description = "APK", Type = MaintenanceTypeEnum.MOT, CarId = 5, Id = 5 },
-                new { Date = DateTime.Now, Milage = 1234567890, Description = "APK", Type = MaintenanceTypeEnum.MOT, CarId = 6, Id = 6 }
+                new { MaintenanceSpecificationId = 1, Date = DateTime.Now, Milage = 1234567890, Description = "Reparatie", MaintenanceType = MaintenanceTypeEnum.REPAIR, CarId = 1 },
+                new { MaintenanceSpecificationId = 2, Date = DateTime.Now, Milage = 1234567890, Description = "Reparatie", MaintenanceType = MaintenanceTypeEnum.REPAIR, CarId = 2 },
+                new { MaintenanceSpecificationId = 3, Date = DateTime.Now, Milage = 1234567890, Description = "Reparatie", MaintenanceType = MaintenanceTypeEnum.REPAIR, CarId = 3 }, 
+                new { MaintenanceSpecificationId = 4, Date = DateTime.Now, Milage = 1234567890, Description = "APK", MaintenanceType = MaintenanceTypeEnum.MOT, CarId = 4, Id = 4 },
+                new { MaintenanceSpecificationId = 5, Date = DateTime.Now, Milage = 1234567890, Description = "APK", MaintenanceType = MaintenanceTypeEnum.MOT, CarId = 5, Id = 5 },
+                new { MaintenanceSpecificationId = 6, Date = DateTime.Now, Milage = 1234567890, Description = "APK", MaintenanceType = MaintenanceTypeEnum.MOT, CarId = 6, Id = 6 }
                 );
         }
     }

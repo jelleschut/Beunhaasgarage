@@ -24,6 +24,7 @@ namespace Core.Models
         public OwnerEnum OwnerType { get; set; }
 
         //Navigation Properties
-        public virtual List<Car> Cars { get; set; }
+        public virtual List<Car> CarOwners { get; set; }
+        public virtual List<Car> CarDrivers { get; set; }
     }
 }

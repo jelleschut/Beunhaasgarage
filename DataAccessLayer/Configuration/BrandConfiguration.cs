@@ -11,17 +11,20 @@ namespace DataAccessLayer.Configuration
     {
         public void Configure(EntityTypeBuilder<Brand> builder)
         {
+            builder.Property(b => b.BrandId)
+                .ValueGeneratedOnAdd();
+
             builder.Property(b => b.Name)
                 .HasMaxLength(40)
                 .IsRequired();
 
             builder.HasData(
-                   new { Name = "Audi" },
-                   new { Name = "BMW" },
-                   new { Name = "Fiat" },
-                   new { Name = "Renault" },
-                   new { Name = "Skoda" },
-                   new { Name = "Volkswagen" }
+                   new { BrandId = 1, Name = "Audi" },
+                   new { BrandId = 2, Name = "BMW" },
+                   new { BrandId = 3, Name = "Fiat" },
+                   new { BrandId = 4, Name = "Renault" },
+                   new { BrandId = 5, Name = "Skoda" },
+                   new { BrandId = 6, Name = "Volkswagen" }
                 );
         }
     }

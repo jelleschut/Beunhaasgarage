@@ -40,7 +40,7 @@ namespace Web.Controllers
                 search = search.ToLower();
                 cars = cars.Where(c => c.LicenseNumber.ToLower().Contains(search)
                                         || c.Owner.Name.ToLower().Contains(search)
-                                        || c.Customer.Name.ToLower().Contains(search)
+                                        || c.Driver.Name.ToLower().Contains(search)
                                         || c.Brand.Name.ToLower().Contains(search)
                                         || c.Model.Name.ToLower().Contains(search));
             }
@@ -54,8 +54,8 @@ namespace Web.Controllers
                 "Model_desc" => cars.OrderByDescending(c => c.Model.Name),
                 "Owner" => cars.OrderBy(c => c.Owner.Name),
                 "Owner_desc" => cars.OrderByDescending(c => c.Owner.Name),
-                "Driver" => cars.OrderBy(c => c.Customer.Name),
-                "Driver_desc" => cars.OrderByDescending(c => c.Customer.Name),
+                "Driver" => cars.OrderBy(c => c.Driver.Name),
+                "Driver_desc" => cars.OrderByDescending(c => c.Driver.Name),
                 _ => cars.OrderBy(c => c.LicenseNumber),
             };
             return View(cars);

@@ -14,7 +14,7 @@ namespace DataAccessLayer
         public DbSet<MaintenanceSpecification> MaintenanceSpecifications { get; set; }
         public DbSet<Model> Models { get; set; }
 
-        GarageContext()
+        public GarageContext()
         {
 
         }

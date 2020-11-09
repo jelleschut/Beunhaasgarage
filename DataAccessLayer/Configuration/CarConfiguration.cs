@@ -12,6 +12,9 @@ namespace DataAccessLayer.Configuration
     {
         public void Configure(EntityTypeBuilder<Car> builder)
         {
+            builder.Property(c => c.CarId)
+                .ValueGeneratedOnAdd();
+
             builder.Property(c => c.LicenseNumber)
                 .HasMaxLength(8)
                 .IsRequired();
@@ -31,11 +34,11 @@ namespace DataAccessLayer.Configuration
 
             builder
                 .HasOne(c => c.Owner)
-                .WithMany(o => o.Cars);
+                .WithMany(o => o.CarOwners);
 
             builder
-                .HasOne(ca => ca.Customer)
-                .WithMany(cu => cu.Cars);
+                .HasOne(ca => ca.Driver)
+                .WithMany(cu => cu.CarDrivers);
 
             builder.HasData(
                 new { CarId = 1, LicenseNumber = "1-ABC-23", Status = StatusEnum.REGISTERED, BrandId = 1, ModelId = 1, OwnerId = 1, CustomerId = 1 },

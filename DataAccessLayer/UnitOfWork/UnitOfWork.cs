@@ -11,7 +11,7 @@ namespace DataAccessLayer.UnitOfWork
     {
         private readonly GarageContext _context;
 
-        UnitOfWork(GarageContext context)
+        public UnitOfWork(GarageContext context)
         {
             _context = context;
             Brands = new BrandRepository(_context);

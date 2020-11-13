@@ -1,6 +1,7 @@
 ﻿using Core.Models;
 using DataAccessLayer.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Proxies;
 using Microsoft.Extensions.Configuration;
 using System;
 
@@ -26,7 +27,9 @@ namespace DataAccessLayer
                         .AddJsonFile("appsettings.json");
             var configuration = builder.Build();
 
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("GarageDb"));
+            optionsBuilder
+                .UseLazyLoadingProxies()
+                .UseSqlServer(configuration.GetConnectionString("GarageDb"));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

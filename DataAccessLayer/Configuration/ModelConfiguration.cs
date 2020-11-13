@@ -11,6 +11,8 @@ namespace DataAccessLayer.Configuration
     {
         public void Configure(EntityTypeBuilder<Model> builder)
         {
+            builder.HasKey(m => m.ModelId);
+
             builder.Property(m => m.ModelId)
                 .ValueGeneratedOnAdd();
 
@@ -19,7 +21,8 @@ namespace DataAccessLayer.Configuration
 
             builder.
                 HasOne(m => m.Brand)
-                .WithMany(b => b.Models);
+                .WithMany(b => b.Models)
+                .IsRequired();
 
             builder.
                 HasData(

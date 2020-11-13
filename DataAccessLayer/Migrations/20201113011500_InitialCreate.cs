@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DataAccessLayer.Migrations
 {
-    public partial class InititalCreate : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -47,7 +47,7 @@ namespace DataAccessLayer.Migrations
                     ModelId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: false),
-                    BrandId = table.Column<int>(nullable: true)
+                    BrandId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,7 +57,7 @@ namespace DataAccessLayer.Migrations
                         column: x => x.BrandId,
                         principalTable: "Brands",
                         principalColumn: "BrandId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,27 +67,20 @@ namespace DataAccessLayer.Migrations
                     CarId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LicenseNumber = table.Column<string>(maxLength: 8, nullable: false),
-                    Status = table.Column<string>(nullable: false),
-                    BrandId = table.Column<int>(nullable: true),
-                    ModelId = table.Column<int>(nullable: true),
-                    OwnerId = table.Column<int>(nullable: true),
-                    DriverOwnerId = table.Column<int>(nullable: true)
+                    Status = table.Column<string>(nullable: true),
+                    ModelId = table.Column<int>(nullable: false),
+                    OwnerId = table.Column<int>(nullable: false),
+                    DriverOwnerId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Cars", x => x.CarId);
                     table.ForeignKey(
-                        name: "FK_Cars_Brands_BrandId",
-                        column: x => x.BrandId,
-                        principalTable: "Brands",
-                        principalColumn: "BrandId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Cars_Owners_DriverOwnerId",
                         column: x => x.DriverOwnerId,
                         principalTable: "Owners",
                         principalColumn: "OwnerId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Cars_Models_ModelId",
                         column: x => x.ModelId,
@@ -112,7 +105,7 @@ namespace DataAccessLayer.Migrations
                     Milage = table.Column<int>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     MaintenanceType = table.Column<string>(nullable: false),
-                    CarId = table.Column<int>(nullable: true)
+                    CarId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -122,7 +115,7 @@ namespace DataAccessLayer.Migrations
                         column: x => x.CarId,
                         principalTable: "Cars",
                         principalColumn: "CarId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -169,15 +162,15 @@ namespace DataAccessLayer.Migrations
 
             migrationBuilder.InsertData(
                 table: "Cars",
-                columns: new[] { "CarId", "BrandId", "DriverOwnerId", "LicenseNumber", "ModelId", "OwnerId", "Status" },
+                columns: new[] { "CarId", "DriverOwnerId", "LicenseNumber", "ModelId", "OwnerId", "Status" },
                 values: new object[,]
                 {
-                    { 1, 1, null, "1-ABC-23", 1, 1, "REGISTERED" },
-                    { 2, 2, null, "9-ZYX-87", 2, 2, "REGISTERED" },
-                    { 3, 3, null, "6-XXX-66", 3, 3, "REGISTERED" },
-                    { 4, 4, null, "AB-CD-12", 4, 7, "REGISTERED" },
-                    { 5, 5, null, "98-ZY-XW", 5, 8, "REGISTERED" },
-                    { 6, 6, null, "XD-XD-88", 6, 9, "REGISTERED" }
+                    { 1, 1, "1-ABC-23", 1, 1, "REGISTERED" },
+                    { 2, 2, "9-ZYX-87", 2, 2, "REGISTERED" },
+                    { 3, 3, "6-XXX-66", 3, 3, "REGISTERED" },
+                    { 4, 4, "AB-CD-12", 4, 7, "REGISTERED" },
+                    { 5, 5, "98-ZY-XW", 5, 8, "REGISTERED" },
+                    { 6, 6, "XD-XD-88", 6, 9, "REGISTERED" }
                 });
 
             migrationBuilder.InsertData(
@@ -185,18 +178,13 @@ namespace DataAccessLayer.Migrations
                 columns: new[] { "MaintenanceSpecificationId", "CarId", "Date", "Description", "MaintenanceType", "Milage" },
                 values: new object[,]
                 {
-                    { 1, 1, new DateTime(2020, 11, 9, 19, 23, 27, 178, DateTimeKind.Local).AddTicks(6107), "Reparatie", "REPAIR", 1234567890 },
-                    { 2, 2, new DateTime(2020, 11, 9, 19, 23, 27, 182, DateTimeKind.Local).AddTicks(4592), "Reparatie", "REPAIR", 1234567890 },
-                    { 3, 3, new DateTime(2020, 11, 9, 19, 23, 27, 182, DateTimeKind.Local).AddTicks(4740), "Reparatie", "REPAIR", 1234567890 },
-                    { 4, 4, new DateTime(2020, 11, 9, 19, 23, 27, 182, DateTimeKind.Local).AddTicks(4744), "APK", "MOT", 1234567890 },
-                    { 5, 5, new DateTime(2020, 11, 9, 19, 23, 27, 182, DateTimeKind.Local).AddTicks(6189), "APK", "MOT", 1234567890 },
-                    { 6, 6, new DateTime(2020, 11, 9, 19, 23, 27, 182, DateTimeKind.Local).AddTicks(6226), "APK", "MOT", 1234567890 }
+                    { 1, 1, new DateTime(2020, 11, 13, 2, 15, 0, 96, DateTimeKind.Local).AddTicks(1902), "Reparatie", "REPAIR", 1234567890 },
+                    { 2, 2, new DateTime(2020, 11, 13, 2, 15, 0, 100, DateTimeKind.Local).AddTicks(2128), "Reparatie", "REPAIR", 1234567890 },
+                    { 3, 3, new DateTime(2020, 11, 13, 2, 15, 0, 100, DateTimeKind.Local).AddTicks(2189), "Reparatie", "REPAIR", 1234567890 },
+                    { 4, 4, new DateTime(2020, 11, 13, 2, 15, 0, 100, DateTimeKind.Local).AddTicks(2193), "APK", "MOT", 1234567890 },
+                    { 5, 5, new DateTime(2020, 11, 13, 2, 15, 0, 100, DateTimeKind.Local).AddTicks(3593), "APK", "MOT", 1234567890 },
+                    { 6, 6, new DateTime(2020, 11, 13, 2, 15, 0, 100, DateTimeKind.Local).AddTicks(3626), "APK", "MOT", 1234567890 }
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Cars_BrandId",
-                table: "Cars",
-                column: "BrandId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cars_DriverOwnerId",

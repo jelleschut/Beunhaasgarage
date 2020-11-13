@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Enums;
-using Core.Interfaces;
-using Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore;
+using Core.Models;
+using DataAccessLayer;
+using Core.Interfaces;
+using Core.Enums;
 
 namespace Web.Controllers.ApiControllers
 {
@@ -22,71 +23,138 @@ namespace Web.Controllers.ApiControllers
             _unitOfWork = unitOfWork;
         }
 
+        // GET: api/CarsApiEndpoint
         [HttpGet]
-        public IActionResult Get()
+        public async Task<ActionResult<IEnumerable<Car>>> GetCars()
         {
-            var result = _unitOfWork.Cars.GetAll();
-            return Ok(result);
-        }
-
-        //GET api/<CarsApiEndpoint>/5
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
-        {
-            if (CarExists(id))
+            var cars = await _unitOfWork.Cars.GetAllAsync();
+            if(cars == null)
             {
-                var result = _unitOfWork.Cars.GetById(id);
-                return Ok(result);
+                return NotFound();
             }
-            return NotFound(id);
+            return Ok(cars);
         }
 
-        // POST api/<CarsApiEndpoint>
+        // GET: api/CarsApiEndpoint/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Car>> GetCar(int id)
+        {
+            var car = await _unitOfWork.Cars.FindAsync(id);
+
+            if (car == null)
+            {
+                return NotFound();
+            }
+
+            return car;
+        }
+
+        // PUT: api/CarsApiEndpoint/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCar(int id, [FromBody] Car car)
+        {
+            if (id != car.CarId)
+            {
+                return BadRequest();
+            }
+
+            _unitOfWork.Cars.UpdateAsync(car);
+
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CarExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+
+
+        [HttpPut("Maintenance/{id}")]
+        public async Task<ActionResult<Car>> StartMaintenance(int id)
+        {
+            Car car = _unitOfWork.Cars.Find(id);
+            
+            car.Status = car.Status switch
+            {
+                StatusEnum.REGISTERED => StatusEnum.IN_PROGRESS,
+                StatusEnum.IN_PROGRESS => StatusEnum.READY,
+                StatusEnum.READY => SampleTestGenerator(),
+                StatusEnum.SAMPLE_TEST => StatusEnum.SIGNED_OFF,
+                _ => car.Status,
+            };
+
+            _unitOfWork.Cars.UpdateAsync(car);
+
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CarExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return car;
+        }
+
+        // POST: api/CarsApiEndpoint
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public IActionResult Post(Car car)
+        public async Task<ActionResult<Car>> PostCar(Car car)
         {
             _unitOfWork.Cars.Add(car);
-            _unitOfWork.Complete();
-            return Ok(car);
+            await _unitOfWork.CompleteAsync();
+
+            return CreatedAtAction("GetCar", new { id = car.CarId }, car);
         }
 
-        // PUT api/<CarsApiEndpoint>/5
-        [HttpPut("{id}")]
-        //public void Put(int id, [FromForm][Bind(Prefix = "Car")] Car car)
-        //{
-        //    if(CarExists(id))
-        //    {
-        //        _carRepository.EditCar(id, car);
-        //    }
-        //}
-
-        public IActionResult Put(int id, Car car)
-        {
-            if (CarExists(id))
-            {
-                _unitOfWork.Cars.Update(car);
-                _unitOfWork.Complete();
-                return Ok(car);
-            }
-            return NotFound(id);
-        }
-
-        // DELETE api/<CarsApiEndpoint>/5
+        // DELETE: api/CarsApiEndpoint/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<ActionResult<Car>> DeleteCar(int id)
         {
-            if (CarExists(id))
+            var car = await _unitOfWork.Cars.FindAsync(id);
+            if (car == null)
             {
-                _unitOfWork.Cars.Remove(_unitOfWork.Cars.GetById(id));
-                _unitOfWork.Complete();
-                return NoContent();
+                return NotFound();
             }
-            return NotFound(id);
+
+            _unitOfWork.Cars.Remove(car);
+            await _unitOfWork.CompleteAsync();
+
+            return car;
+        }
+
+        private StatusEnum SampleTestGenerator()
+        {
+            Random r = new Random();
+            return r.Next(10) <= 3 ? StatusEnum.SAMPLE_TEST : StatusEnum.SIGNED_OFF;
         }
 
         private bool CarExists(int id)
         {
-            return _unitOfWork.Cars.GetById(id) != null;
+            return _unitOfWork.Cars.Find(id) != null;
         }
     }
 }

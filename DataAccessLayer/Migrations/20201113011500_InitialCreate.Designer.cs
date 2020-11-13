@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(GarageContext))]
-    [Migration("20201109182327_InititalCreate")]
-    partial class InititalCreate
+    [Migration("20201113011500_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -77,10 +77,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("BrandId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DriverOwnerId")
+                    b.Property<int>("DriverOwnerId")
                         .HasColumnType("int");
 
                     b.Property<string>("LicenseNumber")
@@ -88,19 +85,16 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(8)")
                         .HasMaxLength(8);
 
-                    b.Property<int?>("ModelId")
+                    b.Property<int>("ModelId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OwnerId")
+                    b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CarId");
-
-                    b.HasIndex("BrandId");
 
                     b.HasIndex("DriverOwnerId");
 
@@ -114,7 +108,7 @@ namespace DataAccessLayer.Migrations
                         new
                         {
                             CarId = 1,
-                            BrandId = 1,
+                            DriverOwnerId = 1,
                             LicenseNumber = "1-ABC-23",
                             ModelId = 1,
                             OwnerId = 1,
@@ -123,7 +117,7 @@ namespace DataAccessLayer.Migrations
                         new
                         {
                             CarId = 2,
-                            BrandId = 2,
+                            DriverOwnerId = 2,
                             LicenseNumber = "9-ZYX-87",
                             ModelId = 2,
                             OwnerId = 2,
@@ -132,7 +126,7 @@ namespace DataAccessLayer.Migrations
                         new
                         {
                             CarId = 3,
-                            BrandId = 3,
+                            DriverOwnerId = 3,
                             LicenseNumber = "6-XXX-66",
                             ModelId = 3,
                             OwnerId = 3,
@@ -141,7 +135,7 @@ namespace DataAccessLayer.Migrations
                         new
                         {
                             CarId = 4,
-                            BrandId = 4,
+                            DriverOwnerId = 4,
                             LicenseNumber = "AB-CD-12",
                             ModelId = 4,
                             OwnerId = 7,
@@ -150,7 +144,7 @@ namespace DataAccessLayer.Migrations
                         new
                         {
                             CarId = 5,
-                            BrandId = 5,
+                            DriverOwnerId = 5,
                             LicenseNumber = "98-ZY-XW",
                             ModelId = 5,
                             OwnerId = 8,
@@ -159,7 +153,7 @@ namespace DataAccessLayer.Migrations
                         new
                         {
                             CarId = 6,
-                            BrandId = 6,
+                            DriverOwnerId = 6,
                             LicenseNumber = "XD-XD-88",
                             ModelId = 6,
                             OwnerId = 9,
@@ -174,7 +168,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CarId")
+                    b.Property<int>("CarId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
@@ -201,7 +195,7 @@ namespace DataAccessLayer.Migrations
                         {
                             MaintenanceSpecificationId = 1,
                             CarId = 1,
-                            Date = new DateTime(2020, 11, 9, 19, 23, 27, 178, DateTimeKind.Local).AddTicks(6107),
+                            Date = new DateTime(2020, 11, 13, 2, 15, 0, 96, DateTimeKind.Local).AddTicks(1902),
                             Description = "Reparatie",
                             MaintenanceType = "REPAIR",
                             Milage = 1234567890
@@ -210,7 +204,7 @@ namespace DataAccessLayer.Migrations
                         {
                             MaintenanceSpecificationId = 2,
                             CarId = 2,
-                            Date = new DateTime(2020, 11, 9, 19, 23, 27, 182, DateTimeKind.Local).AddTicks(4592),
+                            Date = new DateTime(2020, 11, 13, 2, 15, 0, 100, DateTimeKind.Local).AddTicks(2128),
                             Description = "Reparatie",
                             MaintenanceType = "REPAIR",
                             Milage = 1234567890
@@ -219,7 +213,7 @@ namespace DataAccessLayer.Migrations
                         {
                             MaintenanceSpecificationId = 3,
                             CarId = 3,
-                            Date = new DateTime(2020, 11, 9, 19, 23, 27, 182, DateTimeKind.Local).AddTicks(4740),
+                            Date = new DateTime(2020, 11, 13, 2, 15, 0, 100, DateTimeKind.Local).AddTicks(2189),
                             Description = "Reparatie",
                             MaintenanceType = "REPAIR",
                             Milage = 1234567890
@@ -228,7 +222,7 @@ namespace DataAccessLayer.Migrations
                         {
                             MaintenanceSpecificationId = 4,
                             CarId = 4,
-                            Date = new DateTime(2020, 11, 9, 19, 23, 27, 182, DateTimeKind.Local).AddTicks(4744),
+                            Date = new DateTime(2020, 11, 13, 2, 15, 0, 100, DateTimeKind.Local).AddTicks(2193),
                             Description = "APK",
                             MaintenanceType = "MOT",
                             Milage = 1234567890
@@ -237,7 +231,7 @@ namespace DataAccessLayer.Migrations
                         {
                             MaintenanceSpecificationId = 5,
                             CarId = 5,
-                            Date = new DateTime(2020, 11, 9, 19, 23, 27, 182, DateTimeKind.Local).AddTicks(6189),
+                            Date = new DateTime(2020, 11, 13, 2, 15, 0, 100, DateTimeKind.Local).AddTicks(3593),
                             Description = "APK",
                             MaintenanceType = "MOT",
                             Milage = 1234567890
@@ -246,7 +240,7 @@ namespace DataAccessLayer.Migrations
                         {
                             MaintenanceSpecificationId = 6,
                             CarId = 6,
-                            Date = new DateTime(2020, 11, 9, 19, 23, 27, 182, DateTimeKind.Local).AddTicks(6226),
+                            Date = new DateTime(2020, 11, 13, 2, 15, 0, 100, DateTimeKind.Local).AddTicks(3626),
                             Description = "APK",
                             MaintenanceType = "MOT",
                             Milage = 1234567890
@@ -260,7 +254,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("BrandId")
+                    b.Property<int>("BrandId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -464,35 +458,39 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("Core.Models.Car", b =>
                 {
-                    b.HasOne("Core.Models.Brand", "Brand")
-                        .WithMany("Cars")
-                        .HasForeignKey("BrandId");
-
                     b.HasOne("Core.Models.Owner", "Driver")
                         .WithMany("CarDrivers")
-                        .HasForeignKey("DriverOwnerId");
+                        .HasForeignKey("DriverOwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Core.Models.Model", "Model")
                         .WithMany("Cars")
-                        .HasForeignKey("ModelId");
+                        .HasForeignKey("ModelId")
+                        .IsRequired();
 
                     b.HasOne("Core.Models.Owner", "Owner")
                         .WithMany("CarOwners")
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("OwnerId")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Core.Models.MaintenanceSpecification", b =>
                 {
                     b.HasOne("Core.Models.Car", "Car")
                         .WithMany("MaintenanceSpecifications")
-                        .HasForeignKey("CarId");
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Core.Models.Model", b =>
                 {
                     b.HasOne("Core.Models.Brand", "Brand")
                         .WithMany("Models")
-                        .HasForeignKey("BrandId");
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

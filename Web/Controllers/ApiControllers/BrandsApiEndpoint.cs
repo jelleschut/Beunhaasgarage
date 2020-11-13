@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Interfaces;
-using Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore;
+using Core.Models;
+using DataAccessLayer;
+using Core.Interfaces;
 
 namespace Web.Controllers.ApiControllers
 {
@@ -21,64 +22,95 @@ namespace Web.Controllers.ApiControllers
             _unitOfWork = unitOfWork;
         }
 
-        // GET: api/<BrandsController>
+        // GET: api/BrandsApiEndpoint
         [HttpGet]
-        public IActionResult Get()
+        public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
         {
-            var result = _unitOfWork.Brands.GetAll();
-            return Ok(result);
-        }
-
-        // GET api/<BrandsController>/5
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
-        {
-            if(BrandExists(id))
+            var brands =  await _unitOfWork.Brands.GetAllAsync();
+            if(brands == null)
             {
-                var result = _unitOfWork.Brands.GetById(id);
-                return Ok(result);
+                return NotFound();
             }
-            return NotFound(id);
+            return Ok(brands);
         }
 
-        // POST api/<BrandsController>
+        // GET: api/BrandsApiEndpoint/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Brand>> GetBrand(int id)
+        {
+            var brand = await _unitOfWork.Brands.FindAsync(id);
+
+            if (brand == null)
+            {
+                return NotFound();
+            }
+
+            return brand;
+        }
+
+        // PUT: api/BrandsApiEndpoint/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutBrand(int id, Brand brand)
+        {
+            if (id != brand.BrandId)
+            {
+                return BadRequest();
+            }
+
+            _unitOfWork.Brands.UpdateAsync(brand);
+
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!BrandExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/BrandsApiEndpoint
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public IActionResult Post(Brand brand)
+        public async Task<ActionResult<Brand>> PostBrand([Bind("Name")]Brand brand)
         {
             _unitOfWork.Brands.Add(brand);
-            _unitOfWork.Complete();
-            return Ok(brand);
+            await _unitOfWork.CompleteAsync();
+
+            return CreatedAtAction("GetBrand", new { id = brand.BrandId }, brand);
         }
 
-        // PUT api/<BrandsController>/5
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, Brand brand)
-        {
-            if (BrandExists(id))
-            {
-                _unitOfWork.Brands.Update(brand);
-                _unitOfWork.Complete();
-                return Ok(brand);
-            }
-            return NotFound(id);
-        }
-
-        // DELETE api/<BrandsController>/5
+        // DELETE: api/BrandsApiEndpoint/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<ActionResult<Brand>> DeleteBrand(int id)
         {
-            if(BrandExists(id))
+            var brand = await _unitOfWork.Brands.FindAsync(id);
+            if (brand == null)
             {
-                _unitOfWork.Brands.Remove(_unitOfWork.Brands.GetById(id));
-                _unitOfWork.Complete();
-                return NoContent();
+                return NotFound();
             }
-            return NotFound(id);
+
+            _unitOfWork.Brands.Remove(brand);
+            await _unitOfWork.CompleteAsync();
+
+            return brand;
         }
 
         private bool BrandExists(int id)
         {
-            return _unitOfWork.Brands.GetById(id) != null;
+            return _unitOfWork.Brands.Find(id) != null;
         }
     }
 }

@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Core.Models;
+using DataAccessLayer;
+using Core.Interfaces;
 
 namespace Web.Controllers
 {
@@ -17,18 +20,18 @@ namespace Web.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        // GET: BrandsController
-        public IActionResult Index(string order, string search)
+        // GET: Brands
+        public async Task<IActionResult> Index(string order, string search)
         {
             ViewData["BrandSortParm"] = String.IsNullOrEmpty(order) ? "Brand_desc" : "";
             ViewData["ModelSortParm"] = order == "Model" ? "Model_desc" : "Model";
 
-            ViewData["CurrentFilter"] = search;
+            ViewData["SearchFilter"] = search;
             ViewData["CurrenstOrder"] = order;
 
-            var models = from m
-                         in _unitOfWork.Models.GetAll()
-                         select m;
+            var brands = await _unitOfWork.Brands.GetAllAsync();
+            var models = await _unitOfWork.Models.GetAllAsync();
+            
 
             if (search != null)
             {
@@ -45,76 +48,134 @@ namespace Web.Controllers
                 _ => models.OrderBy(m => m.Name).ThenBy(m => m.Name).ThenBy(m => m.Name),
             };
 
-            return View(models);
+            return View(brands);
         }
 
-        // GET: BrandsController/Details/5
-        public ActionResult Details(int id)
+        // GET: Brands/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var brand = await _unitOfWork.Brands
+                .FindAsync((int)id);
+
+            if (brand == null)
+            {
+                return NotFound();
+            }
+
+            return View(brand);
+        }
+
+        // GET: Brands/Create
+        public IActionResult Create()
         {
             return View();
         }
 
-        // GET: BrandsController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: BrandsController/Create
+        // POST: Brands/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create([Bind("brandId,Name")] Brand brand)
         {
-            try
+            if (ModelState.IsValid)
             {
+                _unitOfWork.Brands.Add(brand);
+                await _unitOfWork.CompleteAsync();
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(brand);
         }
 
-        // GET: BrandsController/Edit/5
-        public ActionResult Edit(int id)
+        // GET: Brands/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var brand = await _unitOfWork.Brands.FindAsync((int)id);
+            if (brand == null)
+            {
+                return NotFound();
+            }
+            return View(brand);
         }
 
-        // POST: BrandsController/Edit/5
+        // POST: Brands/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(int brandId, [Bind("brandId,Name")] Brand brand)
         {
-            try
+            if (brandId != brand.BrandId)
             {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _unitOfWork.Brands.Update(brand);
+                    await _unitOfWork.CompleteAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!BrandExists(brand.BrandId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(brand);
         }
 
-        // GET: BrandsController/Delete/5
-        public ActionResult Delete(int id)
+        // GET: Brands/Delete/5
+        public async Task<IActionResult> Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var brand = await _unitOfWork.Brands
+                .FindAsync((int)id);
+
+            if (brand == null)
+            {
+                return NotFound();
+            }
+
+            return View(brand);
         }
 
-        // POST: BrandsController/Delete/5
-        [HttpPost]
+        // POST: Brands/Delete/5
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(int brandId)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var brand = await _unitOfWork.Brands.FindAsync(brandId);
+            _unitOfWork.Brands.Remove(brand);
+            await _unitOfWork.CompleteAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool BrandExists(int id)
+        {
+            return _unitOfWork.Brands.Find(id) != null;
         }
     }
 }

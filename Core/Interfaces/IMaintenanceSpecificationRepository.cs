@@ -5,7 +5,7 @@ using Core.Models;
 
 namespace Core.Interfaces
 {
-    public interface IMaintenanceSpecificationRepository : IGenericRepository<MaintenanceSpecification>
+    public interface IMaintenanceSpecificationRepository : IGenericRepository<MaintenanceSpecification>, IAsyncGenericRepository<MaintenanceSpecification>
     {
     }
 }

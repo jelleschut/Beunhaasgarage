@@ -11,6 +11,8 @@ namespace DataAccessLayer.Configuration
     {
         public void Configure(EntityTypeBuilder<Brand> builder)
         {
+            builder.HasKey(b => b.BrandId);
+
             builder.Property(b => b.BrandId)
                 .ValueGeneratedOnAdd();
 

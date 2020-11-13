@@ -13,6 +13,5 @@ namespace Core.Models
 
         //Navigation Properties
         public virtual List<Model> Models { get; set; }
-        public virtual List<Car> Cars { get; set; }
     }
 }

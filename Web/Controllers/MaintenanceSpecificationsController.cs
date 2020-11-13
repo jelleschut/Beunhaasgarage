@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Interfaces;
-using Core.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Core.Models;
+using DataAccessLayer;
+using Core.Interfaces;
+using Core.Enums;
 
 namespace Web.Controllers
 {
@@ -18,98 +21,176 @@ namespace Web.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        // GET: MaintenanceSpecificationsController
-        public ActionResult  Index()
+        // GET: MaintenanceSpecifications
+        public async Task<IActionResult> Index(DateTime? dateFilter, StatusEnum? statusFilter, string order, string search)
         {
-            IEnumerable<MaintenanceSpecification> msList =_unitOfWork.MaintenanceSpecifications.GetAll();
-            return View(msList);
+            ViewData["IdSortParm"] = String.IsNullOrEmpty(order) ? "Id_desc" : "";
+            ViewData["DateSortParm"] = order == "Date" ? "Date_desc" : "Date";
+            ViewData["LicenseNumberSortParm"] = order == "License" ? "License_desc" : "License";
+            ViewData["StatusSortParm"] = order == "Status" ? "Status_desc" : "Status";
+
+            ViewData["DateFilter"] = dateFilter;
+            ViewData["StatusFilter"] = statusFilter;
+            ViewData["SearchFilter"] = search;
+            ViewData["CurrenstOrder"] = order;
+
+            var maintenanceSpecifications = statusFilter == null ? await _unitOfWork.MaintenanceSpecifications.GetAllAsync() 
+                                                           : await _unitOfWork.MaintenanceSpecifications.WhereAsync(ms => ms.Car.Status == statusFilter);
+
+            if (dateFilter != null)
+            {
+                maintenanceSpecifications = maintenanceSpecifications.Where(ms => ms.Date <= dateFilter);
+            }
+
+            if (search != null)
+            {
+                search = search.ToLower();
+                maintenanceSpecifications = maintenanceSpecifications.Where(ms => ms.Car.LicenseNumber.ToLower().Contains(search));
+            }
+
+            maintenanceSpecifications = order switch
+            {
+                "Id_desc" => maintenanceSpecifications.OrderByDescending(ms => ms.MaintenanceSpecificationId),
+                "Date" => maintenanceSpecifications.OrderBy(ms => ms.Date),
+                "Date_desc" => maintenanceSpecifications.OrderByDescending(ms => ms.Date),
+                "License_desc" => maintenanceSpecifications.OrderByDescending(ms => ms.Car.LicenseNumber),
+                "License" => maintenanceSpecifications.OrderBy(ms => ms.Car.LicenseNumber),
+                "Status" => maintenanceSpecifications.OrderBy(ms => ms.Car.Status),
+                "Status_desc" => maintenanceSpecifications.OrderByDescending(ms => ms.Car.Status),
+                _ => maintenanceSpecifications.OrderBy(ms => ms.MaintenanceSpecificationId),
+            };
+
+            maintenanceSpecifications = maintenanceSpecifications.Where(ms => ms.Car.Status != null
+                                                                        && ms.Car.Status != StatusEnum.SIGNED_OFF);
+
+            return View(maintenanceSpecifications);
         }
 
-        // GET: MaintenanceSpecificationsController/Details/5
-        public ActionResult Details(int id)
+        // GET: MaintenanceSpecifications/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
-            MaintenanceSpecification ms =_unitOfWork.MaintenanceSpecifications.GetById(id);
-            return View(ms);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var maintenanceSpecification = await _unitOfWork.MaintenanceSpecifications
+                .FindAsync((int)id);
+
+            if (maintenanceSpecification == null)
+            {
+                return NotFound();
+            }
+
+            return View(maintenanceSpecification);
         }
 
-        // GET: MaintenanceSpecificationsController/Create
-        public ActionResult Create()
+        // GET: MaintenanceSpecifications/Create
+        public IActionResult Create()
         {
             return View();
         }
 
-        // POST: MaintenanceSpecificationsController/Create
+        // POST: MaintenanceSpecifications/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("Milage,Description,MaintenanceType,Car,Driver,Status")] MaintenanceSpecification ms)
+        public async Task<IActionResult> Create([Bind("maintenanceSpecificationId,Name")] MaintenanceSpecification maintenanceSpecification)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(ms);
-            }
-
-            try
-            {
-               _unitOfWork.MaintenanceSpecifications.Add(ms);
+                _unitOfWork.MaintenanceSpecifications.Add(maintenanceSpecification);
+                await _unitOfWork.CompleteAsync();
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(maintenanceSpecification);
         }
 
-        // GET: MaintenanceSpecificationsController/Edit/5
-        public ActionResult Edit(int id)
+        // GET: MaintenanceSpecifications/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
-            MaintenanceSpecification ms =_unitOfWork.MaintenanceSpecifications.GetById(id);
-            return View(ms);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var maintenanceSpecification = await _unitOfWork.MaintenanceSpecifications.FindAsync((int)id);
+            if (maintenanceSpecification == null)
+            {
+                return NotFound();
+            }
+            return View(maintenanceSpecification);
         }
 
-        // POST: MaintenanceSpecificationsController/Edit/5
+        // POST: MaintenanceSpecifications/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind("MaintenanceSpecificationId,Milage,Description,Type,Car,Driver,Status")] MaintenanceSpecification ms)
+        public async Task<IActionResult> Edit(int maintenanceSpecificationId, [Bind("maintenanceSpecificationId,Name")] MaintenanceSpecification maintenanceSpecification)
         {
-            if (!ModelState.IsValid)
+            if (maintenanceSpecificationId != maintenanceSpecification.MaintenanceSpecificationId)
             {
-                return View(ms);
+                return NotFound();
             }
 
-            try
+            if (ModelState.IsValid)
             {
-               _unitOfWork.MaintenanceSpecifications.Update(ms);
+                try
+                {
+                    _unitOfWork.MaintenanceSpecifications.Update(maintenanceSpecification);
+                    await _unitOfWork.CompleteAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!MaintenanceSpecificationExists(maintenanceSpecification.MaintenanceSpecificationId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(maintenanceSpecification);
         }
 
-        // GET: MaintenanceSpecificationsController/Delete/5
-        [ActionName("Delete")]
-        public ActionResult DeleteGet(int id)
+        // GET: MaintenanceSpecifications/Delete/5
+        public async Task<IActionResult> Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var maintenanceSpecification = await _unitOfWork.MaintenanceSpecifications
+                .FindAsync((int)id);
+
+            if (maintenanceSpecification == null)
+            {
+                return NotFound();
+            }
+
+            return View(maintenanceSpecification);
         }
 
-        // POST: MaintenanceSpecificationsController/Delete/5
-        [HttpPost]
+        // POST: MaintenanceSpecifications/Delete/5
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [ActionName("Delete")]
-        public ActionResult DeletePost([Bind("MaintenanceSpecificationId,Milage,Description,Type,Car,Driver,Status")] MaintenanceSpecification ms)
+        public async Task<IActionResult> DeleteConfirmed(int maintenanceSpecificationId)
         {
+            var maintenanceSpecification = await _unitOfWork.MaintenanceSpecifications.FindAsync(maintenanceSpecificationId);
+            _unitOfWork.MaintenanceSpecifications.Remove(maintenanceSpecification);
+            await _unitOfWork.CompleteAsync();
+            return RedirectToAction(nameof(Index));
+        }
 
-            try
-            {
-               _unitOfWork.MaintenanceSpecifications.Remove(ms);
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+        private bool MaintenanceSpecificationExists(int id)
+        {
+            return _unitOfWork.MaintenanceSpecifications.Find(id) != null;
         }
     }
 }

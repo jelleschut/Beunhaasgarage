@@ -5,7 +5,7 @@ using Core.Models;
 
 namespace Core.Interfaces
 {
-    public interface IModelRepository : IGenericRepository<Model>
+    public interface IModelRepository : IGenericRepository<Model>, IAsyncGenericRepository<Model>
     {
         List<Model> GetModelsByBrand(int brandId);
         List<Model> GetModelsByBrand(string brandName);

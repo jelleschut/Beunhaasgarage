@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Interfaces;
-using Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Web.ViewModels;
-
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore;
+using Core.Models;
+using DataAccessLayer;
+using Core.Interfaces;
 
 namespace Web.Controllers.ApiControllers
 {
@@ -24,82 +22,97 @@ namespace Web.Controllers.ApiControllers
             _unitOfWork = unitOfWork;
         }
 
-        // GET: api/<OwnerApiEndpoint>
+        // GET: api/OwnersApiEndpoint
         [HttpGet]
-        public IActionResult Get()
+        public async Task<ActionResult<IEnumerable<Owner>>> GetOwners()
         {
-            var result = _unitOfWork.Owners.GetAll();
-            return Ok(result);
-        }
-
-        // GET api/<OwnerApiEndpoint>/5
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
-        {
-            if (OwnerExists(id))
+            var owners = await _unitOfWork.Owners.GetAllAsync();
+            if (owners == null)
             {
-                var result = _unitOfWork.Brands.GetById(id);
-                return Ok(result);
+                return NotFound();
             }
-            return NotFound(id);
+            return Ok(owners);
         }
 
-        // POST api/<OwnerApiEndpoint>
-        [HttpPost]
-        public IActionResult Post(Owner owner)
+        // GET: api/OwnersApiEndpoint/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Owner>> GetOwner(int id)
         {
-            _unitOfWork.Owners.Add(owner);
-            _unitOfWork.Complete();
+            var owner = await _unitOfWork.Owners.FindAsync(id);
+
+            if (owner == null)
+            {
+                return NotFound();
+            }
+
+            return owner;
+        }
+
+        // PUT: api/OwnersApiEndpoint/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Owner>> PutOwner(int id, [FromBody] Owner owner)
+        {
+            if (id != owner.OwnerId)
+            {
+                return BadRequest();
+            }
+
+            _unitOfWork.Owners.UpdateAsync(owner);
+
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!OwnerExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            owner = await _unitOfWork.Owners.FindAsync(id);
+
             return Ok(owner);
         }
 
-        // POST api/<OwnerApiEndpoint>
-        //[HttpPost]
-        //public void Post([FromForm][Bind(Prefix="Customer")] Owner owner)
-        //{
-        //        _unitOfWork.Owners.Add(owner);
-        //}
-
-        // PUT api/<OwnerApiEndpoint>/5
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, Owner owner)
+        // POST: api/OwnersApiEndpoint
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost]
+        public async Task<ActionResult<Owner>> PostOwner(Owner owner)
         {
-            if (OwnerExists(id))
-            {
-                _unitOfWork.Owners.Update(owner);
-                _unitOfWork.Complete();
-                return Ok(owner);
-            }
-            return NotFound(id);
+            _unitOfWork.Owners.Add(owner);
+            await _unitOfWork.CompleteAsync();
+
+            return CreatedAtAction("GetOwner", new { id = owner.OwnerId }, owner);
         }
 
-        // PUT api/<OwnerApiEndpoint>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromForm][Bind(Prefix = "Customer")] Owner customer)
-        //{
-        //    if(OwnerExists(id))
-        //    {
-        //        _unitOfWork.Owners.Update(customer);
-        //    }
-        //}
-
-
-        // DELETE api/<OwnerApiEndpoint>/5
+        // DELETE: api/OwnersApiEndpoint/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<ActionResult<Owner>> DeleteOwner(int id)
         {
-            if (OwnerExists(id))
+            var owner = await _unitOfWork.Owners.FindAsync(id);
+            if (owner == null)
             {
-                _unitOfWork.Owners.Remove(_unitOfWork.Owners.GetById(id));
-                _unitOfWork.Complete();
-                return NoContent();
+                return NotFound();
             }
-            return NotFound(id);
+
+            _unitOfWork.Owners.Remove(owner);
+            await _unitOfWork.CompleteAsync();
+
+            return owner;
         }
 
         private bool OwnerExists(int id)
         {
-            return _unitOfWork.Owners.GetById(id) != null;
+            return _unitOfWork.Owners.Find(id) != null;
         }
     }
 }

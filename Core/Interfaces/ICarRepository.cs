@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Core.Interfaces
 {
-    public interface ICarRepository : IGenericRepository<Car>
+    public interface ICarRepository : IGenericRepository<Car>, IAsyncGenericRepository<Car>
     {
     }
 }

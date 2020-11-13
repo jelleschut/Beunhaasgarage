@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -11,10 +11,24 @@
     <Compile Remove="Migrations\20201109182139_InititalCreate.Designer.cs" />
     <Compile Remove="Migrations\20201109182242_InititalCreate.cs" />
     <Compile Remove="Migrations\20201109182242_InititalCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201109182327_InititalCreate.cs" />
+    <Compile Remove="Migrations\20201109182327_InititalCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201109233120_AddedExplicitRelations.cs" />
+    <Compile Remove="Migrations\20201109233120_AddedExplicitRelations.Designer.cs" />
+    <Compile Remove="Migrations\20201109234120_InititalCreate.cs" />
+    <Compile Remove="Migrations\20201109234120_InititalCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201109234504_InititalCreate.cs" />
+    <Compile Remove="Migrations\20201109234504_InititalCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201109234749_InititalCreate.cs" />
+    <Compile Remove="Migrations\20201109234749_InititalCreate.Designer.cs" />
+    <Compile Remove="Migrations\20201113004336_InitialCreate.cs" />
+    <Compile Remove="Migrations\20201113004336_InitialCreate.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.9">
       <PrivateAssets>all</PrivateAssets>

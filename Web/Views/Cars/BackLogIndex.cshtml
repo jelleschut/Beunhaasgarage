@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Core.Models.Car>
+
+@{
+    ViewData["Title"] = "Cars";
+}
+
+<h1>BackLog</h1>
+
+<partial name="~/Views/Shared/Partial/_Partial_Index_Search.cshtml" />
+
+<table class="table table-striped table-hover table-sm">
+    <thead class="thead-dark">
+        <tr class="d-flex">
+            <th class="col-2">
+                <a class="text-light font-weight-bold" asp-action="Index" asp-route-order="@ViewData["LicenseNumberParm"]">@Html.DisplayNameFor(model => model.LicenseNumber)</a>
+            </th>
+            <th class="col-2">
+                <a class="text-light font-weight-bold" asp-action="Index" asp-route-order="@ViewData["BrandSortParm"]">@Html.DisplayNameFor(model => model.Model.Brand)</a>
+            </th>
+            <th class="col-2">
+                <a class="text-light font-weight-bold" asp-action="Index" asp-route-order="@ViewData["ModelSortParm"]">@Html.DisplayNameFor(model => model.Model)</a>
+            </th>
+            <th class="col-2">
+                <a class="text-light font-weight-bold" asp-action="Index" asp-route-order="@ViewData["StatusSortParm"]">@Html.DisplayNameFor(model => model.Status)</a>
+            </th>
+            <th class="col-1">
+            </th>
+            <th class="col-2">
+            </th>
+            <th class="col-1">
+            </th>
+        </tr>
+    </thead>
+    <tbody class="border">
+        @foreach (var item in Model)
+        {
+            <tr class="d-flex">
+                <td class="col-2">
+                    @Html.ActionLink(item.LicenseNumber, "Details", new { id = item.CarId })
+                </td>
+                <td class="col-2">
+                    @Html.DisplayFor(modelItem => item.Model.Brand.Name)
+                </td>
+                <td class="col-2">
+                    @Html.DisplayFor(modelItem => item.Model.Name)
+                </td>
+                <td id="@item.CarId-status" class="col-2">
+                    @if (item.Status != Core.Enums.StatusEnum.REGISTERED && item.Status != Core.Enums.StatusEnum.SIGNED_OFF)
+                    {
+                        @Html.ActionLink(item.Status.ToString(), "Details", "MaintenanceSpecifications", new { id = item.MaintenanceSpecifications.FirstOrDefault().MaintenanceSpecificationId }, null)
+                    }
+                    else if (item.Status == null && item.Status == Core.Enums.StatusEnum.SIGNED_OFF)
+                    {
+                        @Html.ActionLink(item.Driver.Name, "Details", "Owners", new { id = item.Driver.OwnerId }, null)
+                    }
+                </td>
+
+                <td class="col-1">
+                    @if (item.Status == Core.Enums.StatusEnum.REGISTERED)
+                    {
+                        <a id="@item.CarId-btn" class="start-btn btn btn-sm btn-success"
+                           asp-controller="maintenanceSpecifications"
+                           asp-action="Details"
+                           asp-route-id="@item.MaintenanceSpecifications.FirstOrDefault().MaintenanceSpecificationId">Start</a>
+                    }
+                    else if (item.Status == null || item.Status == Core.Enums.StatusEnum.SIGNED_OFF)
+                    {
+                        @Html.DisplayFor(modelItem => item.Driver.PhoneNumber)
+                    }
+                </td>
+                <td id="@item.CarId-name" class="col-2">
+                </td>
+                <td id="@item.CarId-phone" class="col-1">
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts {
+
+    <script>
+
+        $(document).ready(function () {
+
+
+            $('.start-btn').click(function () {
+                let actionUrl = "Api/CarsApiEndPoint/Maintenance/" + id;
+
+                $.ajax({
+                    type: "PUT",
+                    url: actionUrl,
+                    success: (data) => {
+                        console.log('Succes');
+                        console.log(data);
+                    },
+                    error: (data) => {
+                        console.log('Failed');
+                        console.log(data);
+                    }
+                });
+            });
+        });
+
+    </script>
+}
+

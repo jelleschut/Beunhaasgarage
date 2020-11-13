@@ -1,0 +1,259 @@
+﻿@model Core.Models.Owner
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="row">
+    <div class="col-4">
+        <h1>@Model.OwnerType</h1>
+    </div>
+    <div class="offset-7 col-1">
+        <a class="btn btn-dark" asp-action="Index" asp-route-type="@Model.OwnerType">Back</a>
+    </div>
+</div>
+
+<div>
+    <form id="car-form" asp-action="Edit" >
+        <div class="navbar navbar-form navbar-expand-sm bg-dark border box-shadow rounded flex-row justify-content-between">
+            <div class="col-md-2 navbar-brand text-light"><b>@Model.Name</b></div>
+            <div class=" btn-group non-editable pr-3">
+                <button id="edit-btn" type="button" class="btn btn-danger mt-auto non-editable">Edit</button>
+            </div>
+            <div class="btn-group editable col-md-2 d-none">
+                <button id="save-btn" type="submit" value="Save" class="btn btn-success mt-auto">Save</button>
+                <button id="cancel-btn" type="button" value="Cancel" class="btn btn-danger mt-auto">Cancel</button>
+            </div>
+        </div>
+
+
+        <div class="container pt-3 border border-top-0 rounded-bottom">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="d-none">
+                <label asp-for="OwnerId" class="control-label"></label>
+                <input id="owner-id"
+                       asp-for="OwnerId" class="form-control" />
+                <span asp-validation-for="OwnerId" class="text-danger"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="col-md-6 non-editable">
+                    <label asp-for="Name" class="control-label"></label>
+                    <div class="ml-2 font-weight-bold">
+                        <span>@Model.Name</span>
+                    </div>
+                    <hr class="mt-1 mb-2" />
+                </div>
+
+                <div class="col-md-4 editable d-none">
+                    <label asp-for="Name" class="control-label"></label>
+                    <div class="input-group">
+                        <input id="input-name"
+                               asp-for="Name" class="form-control" />
+                        <div class="input-group-append">
+                        </div>
+                    </div>
+                </div>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="col-md-5 non-editable">
+                    <label asp-for="Street" class="control-label"></label>
+                    <div class="ml-2 font-weight-bold">
+                        <span>@Model.Street</span>
+                    </div>
+                    <hr class="mt-1 mb-2" />
+                </div>
+
+                <div class="col-md-4 editable d-none">
+                    <label asp-for="Street" class="control-label"></label>
+                    <div class="input-group">
+                        <input id="input-street"
+                               asp-for="Street" class="form-control" />
+                        <div class="input-group-append">
+                        </div>
+                    </div>
+                </div>
+                <span asp-validation-for="Street" class="text-danger"></span>
+
+                <div class="col-md-1 non-editable">
+                    <label asp-for="HouseNumber" class="control-label"></label>
+                    <div class="ml-2 font-weight-bold">
+                        <span>@Model.HouseNumber</span>
+                    </div>
+                    <hr class="mt-1 mb-2" />
+                </div>
+
+                <div class="offset-md-1 col-md-1 editable d-none">
+                    <label asp-for="HouseNumber" class="control-label"></label>
+                    <div class="input-group">
+                        <input id="input-housenumber"
+                               asp-for="HouseNumber" class="form-control" />
+                        <div class="input-group-append">
+                        </div>
+                    </div>
+                </div>
+                <span asp-validation-for="HouseNumber" class="text-danger"></span>
+
+                <div class="col-md-2 non-editable">
+                    <label asp-for="Zipcode" class="control-label"></label>
+                    <div class="ml-2 font-weight-bold">
+                        <span>@Model.Zipcode</span>
+                    </div>
+                    <hr class="mt-1 mb-2" />
+                </div>
+
+                <div class="col-md-2 editable d-none">
+                    <label asp-for="Zipcode" class="control-label"></label>
+                    <div class="input-group">
+                        <input id="input-zipcode"
+                               asp-for="Zipcode" class="form-control" />
+                        <div class="input-group-append">
+                        </div>
+                    </div>
+                </div>
+                <span asp-validation-for="Zipcode" class="text-danger"></span>
+
+                <div class="offset-md-1 col-md-3 non-editable">
+                    <label asp-for="City" class="control-label"></label>
+                    <div class="ml-2 font-weight-bold">
+                        <span>@Model.City</span>
+                    </div>
+                    <hr class="mt-1 mb-2" />
+                </div>
+
+                <div class="offset-md-1 col-md-3 editable d-none">
+                    <label asp-for="City" class="control-label"></label>
+                    <div class="input-group">
+                        <input id="input-city"
+                               asp-for="City" class="form-control" />
+                        <div class="input-group-append">
+                        </div>
+                    </div>
+                </div>
+
+                <span asp-validation-for="City" class="text-danger"></span>
+
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 non-editable">
+                    <label asp-for="PhoneNumber" class="control-label"></label>
+                    <div class="ml-2 font-weight-bold">
+                        <span>@Model.PhoneNumber</span>
+                    </div>
+                    <hr class="mt-1 mb-2" />
+                </div>
+
+                <div class="col-md-4 editable d-none">
+                    <label asp-for="PhoneNumber" class="control-label"></label>
+                    <div class="input-group">
+                        <input id="input-phonenumber"
+                               asp-for="PhoneNumber" class="form-control" />
+                        <div class="input-group-append">
+                        </div>
+                    </div>
+                </div>
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+
+                <div class="col-md-6 non-editable">
+                    <label asp-for="Email" class="control-label"></label>
+                    <div class="ml-2 font-weight-bold">
+                        <span>@Model.Email</span>
+                    </div>
+                    <hr class="mt-1 mb-2" />
+                </div>
+
+                <div class="offset-md-2 col-md-4 editable d-none">
+                    <label asp-for="Email" class="control-label"></label>
+                    <div class="input-group">
+                        <input id="input-email"
+                               asp-for="Email" class="form-control" />
+                        <div class="input-group-append">
+                        </div>
+                    </div>
+                </div>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="col-md-6 non-editable">
+                    <label asp-for="OwnerType" class="control-label"></label>
+                    <div class="ml-2 font-weight-bold">
+                        <span>@Model.OwnerType</span>
+                    </div>
+                    <hr class="mt-1 mb-2" />
+                </div>
+
+                <div class="col-md-5 editable d-none">
+                    <label asp-for="OwnerType" class="control-label"></label>
+                    <div class="input-group">
+                        <select id="ownertype-select"
+                                class="custom-select"
+                                asp-for="OwnerType"
+                                asp-items="@Html.GetEnumSelectList<Core.Enums.OwnerEnum>()">
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+@section scripts {
+
+    <script>
+        $(document).ready(function () {
+
+            $('#edit-btn').click(enableEdit);
+            $('#cancel-btn').click(disableEdit);
+            $('#save-btn').click(saveEdit);
+
+            function enableEdit() {
+                $(".editable").removeClass('d-none');
+                $(".non-editable").addClass('d-none');
+                $('#maintenancetype-select option:contains(@Model.OwnerType)').prop('selected', true);
+            }
+
+            function disableEdit() {
+                $(".editable").addClass('d-none');
+                $(".non-editable").removeClass('d-none');
+            }
+
+            function saveEdit() {
+                let actionUrl = '/Api/OwnersApiEndpoint/' + @Model.OwnerId;
+                let owner = {
+                    OwnerId: $('#owner-id').val(),
+                    Name: $('#input-name').val(),
+                    City: $('#input-city').val(),
+                    Street: $('#input-street').val(),
+                    HouseNumber: $('#input-housenumber').val(),
+                    ZipCode: $('#input-zipcode').val(),
+                    PhoneNumber: $('#input-phonenumber').val(),
+                    Email: $('#input-email').val(),
+                    OwnerType: $('#ownertype-select').val(),
+                }
+
+                $.ajax({
+                    type: "PUT",
+                    url: actionUrl,
+                    contentType: "application/json",
+                    data: JSON.stringify(owner),
+                    success: (data) => {
+                        console.log('Succes');
+                        console.log(data);
+
+                    },
+                    error: (data) => {
+                        console.log('Failed');
+                        console.log(data);
+                    }
+                });
+
+                location.reload(true);
+            }
+    });
+    </script>
+
+}

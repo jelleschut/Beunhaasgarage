@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Core.Interfaces;
 using DataAccessLayer.Repositories;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -30,6 +31,11 @@ namespace DataAccessLayer.UnitOfWork
         public int Complete()
         {
             return _context.SaveChanges();
+        }
+
+        public Task<int> CompleteAsync()
+        {
+            return _context.SaveChangesAsync();
         }
 
         public void Dispose()

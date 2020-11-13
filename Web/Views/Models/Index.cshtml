@@ -1,0 +1,101 @@
+﻿@model IEnumerable<Core.Models.Model>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Models</h1>
+
+<table class="table table-striped table-hover table-sm">
+    <thead class="thead-dark">
+        <tr class="d-flex">
+            <th class="col-2">
+                <a class="text-light font-weight-bold" asp-action="Index" asp-route-order="@ViewData["BrandSortParm"]">Brand</a>
+            </th>
+            <th class="col-10">
+                <a class="text-light font-weight-bold" asp-action="Index" asp-route-order="@ViewData["ModelSortParm"]">Model</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody class="border">
+        @foreach (var item in Model.Select(m => m.Brand).Distinct())
+        {
+            <tr class="d-flex">
+                <td class="col-2">
+                    <b><u>@Html.DisplayFor(modelitem => item.Name)</u></b>
+                </td>
+                <td class="col-8">
+                </td>
+                <td class="col-2">
+                    <div class="btn-group-sm">
+                        <button id="brand-@item.BrandId-edit-btn" type="button" class="brand-edit-btn btn btn-sm btn-danger">Edit</button>
+                        <button id="brand-@item.BrandId-add-btn" type="button" class="brand-add-btn btn btn-sm btn-success">Add</button>
+                    </div>
+                </td>
+            </tr>
+
+            @foreach (var item2 in Model.Where(m => m.Brand == item))
+            {
+                <tr class="d-flex">
+                    <td class="col-2">
+                    </td>
+                    <td class="col-2">
+                        <input id="" type="hidden" value="@item2.ModelId" />
+                        @Html.DisplayFor(modelItem => item2.Name)
+                    </td>
+                    <td class="col-6">
+                    </td>
+                    <td class="col-2">
+                        <div class="btn-group-sm">
+                            <button id="brand-@item.BrandId-model-@item2.ModelId-edit-btn" type="button" class="model-edit-btn btn btn-sm btn-danger">Edit</button>
+                            <button id="brand-@item.BrandId-model-@item2.ModelId-add-btn" type="button" class="model-add-btn btn btn-sm btn-success">Add</button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+
+            $('.brand-edit-btn').click()
+
+            function createModel() {
+                let actionUrl = "/Api/ModelsApiEndpoint/"
+                let name = $('#model-text-input').val();
+                let brand = {
+                    BrandId: $("#brand-select").val(),
+                    Name: $("#brand-select option:selected").text()
+                };
+
+                let model = {
+                    Brand: brand,
+                    Name: name
+                }
+
+                $.post({
+                    url: actionUrl,
+                    data: JSON.stringify(model),
+                    contentType: 'application/json',
+                    succes: (data) => {
+                        $('body').html(data);
+                        console.log('Success');
+                        console.log(data);
+                    },
+                    error: (data) => {
+                        console.log('Failed');
+                        console.log(data);
+                    }
+                });
+
+                location.reload();
+            }
+
+        });
+
+    </script>
+}

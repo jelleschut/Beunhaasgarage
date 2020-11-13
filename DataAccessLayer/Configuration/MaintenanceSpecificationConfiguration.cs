@@ -12,6 +12,8 @@ namespace DataAccessLayer.Configuration
     {
         public void Configure(EntityTypeBuilder<MaintenanceSpecification> builder)
         {
+            builder.HasKey(ms => ms.MaintenanceSpecificationId);
+
             builder.Property(ms => ms.MaintenanceSpecificationId)
                 .ValueGeneratedOnAdd();
 
@@ -30,7 +32,8 @@ namespace DataAccessLayer.Configuration
                 v => (MaintenanceTypeEnum)Enum.Parse(typeof(MaintenanceTypeEnum), v));
 
             builder.HasOne(ms => ms.Car)
-                .WithMany(c => c.MaintenanceSpecifications);
+                .WithMany(c => c.MaintenanceSpecifications)
+                .IsRequired();
 
             builder.HasData(
                 new { MaintenanceSpecificationId = 1, Date = DateTime.Now, Milage = 1234567890, Description = "Reparatie", MaintenanceType = MaintenanceTypeEnum.REPAIR, CarId = 1 },

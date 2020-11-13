@@ -2,45 +2,42 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Interfaces;
-using Core.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Core.Models;
+using DataAccessLayer;
+using Core.Interfaces;
+using Core.Enums;
 
 namespace Web.Controllers
 {
     public class OwnersController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+
         public OwnersController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        // GET: CustomersController
-        public IActionResult Index(string order, string search)
+        // GET: Owners
+        public async Task<IActionResult> Index(OwnerEnum type, string order, string search)
         {
+            ViewData["Type"] = type.ToString();
             ViewData["NameSortParm"] = String.IsNullOrEmpty(order) ? "Name_desc" : "";
             ViewData["CitySortParm"] = order == "City" ? "City_desc" : "City";
-            ViewData["ZipcodeSortParm"] = order == "Zipcode" ? "Zipcode_desc" : "Zipcode";
 
-            ViewData["CurrentFilter"] = search;
+            ViewData["SearchFilter"] = search;
             ViewData["CurrenstOrder"] = order;
 
-
-            var owners = from c
-                       in _unitOfWork.Owners.GetAll()
-                       select c;
+            var owners = await _unitOfWork.Owners.WhereAsync(o => o.OwnerType == type);
 
             if (search != null)
             {
                 search = search.ToLower();
-                owners = owners.Where(c => c.Name.ToLower().Contains(search)
-                                        || c.City.ToLower().Contains(search)
-                                        || c.Street.ToLower().Contains(search)
-                                        || c.Zipcode.ToLower().Contains(search)
-                                        || c.PhoneNumber.ToLower().Contains(search)
-                                        || c.Email.ToLower().Contains(search));
+                owners = owners.Where(c => (c.Name.ToLower().Contains(search)
+                                        || c.City.ToLower().Contains(search)));
             }
 
             owners = order switch
@@ -48,98 +45,137 @@ namespace Web.Controllers
                 "Name_desc" => owners.OrderByDescending(c => c.Name),
                 "City" => owners.OrderBy(c => c.City).ThenBy(c => c.Street).ThenBy(c => c.HouseNumber),
                 "City_desc" => owners.OrderByDescending(c => c.City).ThenBy(c => c.Street).ThenBy(c => c.HouseNumber),
-                "Zipcode" => owners.OrderBy(c => c.Zipcode),
-                "Zipcode_desc" => owners.OrderByDescending(c => c.Zipcode),
                 _ => owners.OrderBy(c => c.Name),
             };
 
             return View(owners);
         }
 
-        // GET: CustomersController/Details/5
-        public ActionResult Details(int id)
+        // GET: Owners/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
-            Owner owner = _unitOfWork.Owners.GetById(id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var owner = await _unitOfWork.Owners
+                .FindAsync((int)id);
+
+            if (owner == null)
+            {
+                return NotFound();
+            }
+
             return View(owner);
         }
 
-        // GET: CustomersController/Create
-        public ActionResult Create()
+        // GET: Owners/Create
+        public IActionResult Create()
         {
             return View();
         }
 
-        // POST: CustomersController/Create
+        // POST: Owners/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("Name,City,Street,HouseNumber,Zipcode,PhoneNumber,Email")] Owner owner)
+        public async Task<IActionResult> Create([Bind("OwnerId,Name,City,Street,HouseNumber,Zipcode,PhoneNumber,Email,OwnerType")] Owner owner)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(owner);
-            }
-
-            try
+            if (ModelState.IsValid)
             {
                 _unitOfWork.Owners.Add(owner);
-                return RedirectToAction(nameof(Index));
+                await _unitOfWork.CompleteAsync();
+                return RedirectToAction(nameof(Index), new { type = (int)owner.OwnerType });
             }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: CustomersController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            Owner owner = _unitOfWork.Owners.GetById(id);
             return View(owner);
         }
 
-        // POST: CustomersController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind("OwnerId,Name,City,Street,HouseNumber,Zipcode,PhoneNumber,Email")] Owner owner)
+        // GET: Owners/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
-            if (!ModelState.IsValid)
+            if (id == null)
             {
-                return View(owner);
+                return NotFound();
             }
 
-            try
+            var owner = await _unitOfWork.Owners.FindAsync((int)id);
+            if (owner == null)
             {
-                _unitOfWork.Owners.Update(owner);
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
-            {
-                return View();
-            }
+            return View(owner);
         }
 
-        // GET: CustomersController/Delete/5
-        [ActionName("Delete")]
-        public ActionResult DeleteGet(int id)
-        {
-            return View();
-        }
-
-        // POST: CustomersController/Delete/5
+        // POST: Owners/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ActionName("Delete")]
-        public ActionResult DeletePost([Bind("OwnerId,Name,City,Street,HouseNumber,Zipcode,PhoneNumber,Email")] Owner owner)
+        public async Task<IActionResult> Edit(int ownerId, [Bind("OwnerId,Name,City,Street,HouseNumber,Zipcode,PhoneNumber,Email,OwnerType")] Owner owner)
         {
-            try
+            if (ownerId != owner.OwnerId)
             {
-                _unitOfWork.Owners.Remove(owner);
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
+
+            if (ModelState.IsValid)
             {
-                return View();
+                try
+                {
+                    _unitOfWork.Owners.Update(owner);
+                    await _unitOfWork.CompleteAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!OwnerExists(owner.OwnerId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index), new { type = (int)owner.OwnerType });
             }
+            return View(owner);
+        }
+
+        // GET: Owners/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var owner = await _unitOfWork.Owners
+                .FindAsync((int)id);
+
+            if (owner == null)
+            {
+                return NotFound();
+            }
+
+            return View(owner);
+        }
+
+        // POST: Owners/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int ownerId)
+        {
+            var owner = await _unitOfWork.Owners.FindAsync(ownerId);
+            _unitOfWork.Owners.Remove(owner);
+            await _unitOfWork.CompleteAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool OwnerExists(int id)
+        {
+            return _unitOfWork.Owners.Find(id) != null;
         }
     }
 }

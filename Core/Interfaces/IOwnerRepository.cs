@@ -5,7 +5,7 @@ using Core.Models;
 
 namespace Core.Interfaces
 {
-    public interface IOwnerRepository : IGenericRepository<Owner>
+    public interface IOwnerRepository : IGenericRepository<Owner>, IAsyncGenericRepository<Owner>
     {
     }
 }

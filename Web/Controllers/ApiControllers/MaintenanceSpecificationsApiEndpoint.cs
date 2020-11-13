@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Interfaces;
-using Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore;
+using Core.Models;
+using DataAccessLayer;
+using Core.Interfaces;
 
 namespace Web.Controllers.ApiControllers
 {
@@ -14,7 +15,6 @@ namespace Web.Controllers.ApiControllers
     [ApiController]
     public class MaintenanceSpecificationsApiEndpoint : ControllerBase
     {
-
         private readonly IUnitOfWork _unitOfWork;
 
         public MaintenanceSpecificationsApiEndpoint(IUnitOfWork unitOfWork)
@@ -22,65 +22,128 @@ namespace Web.Controllers.ApiControllers
             _unitOfWork = unitOfWork;
         }
 
-        // GET: api/<MaintenanceSpecificationsApiEndpoint>
+        // GET: api/MaintenanceSpecificationsApiEndpoint
         [HttpGet]
-        public IActionResult Get()
+        public async Task<ActionResult<IEnumerable<MaintenanceSpecification>>> GetMaintenanceSpecifications()
         {
-            var result = _unitOfWork.MaintenanceSpecifications.GetAll();
-            return Ok(result);
-        }
-
-        // GET api/<MaintenanceSpecificationsApiEndpoint>/5
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
-        {
-            if (MaintenanceSpecificationExists(id))
+            var ms = await _unitOfWork.MaintenanceSpecifications.GetAllAsync();
+            if (ms == null)
             {
-                var result = _unitOfWork.MaintenanceSpecifications.GetById(id);
-                return Ok(result);
+                return NotFound();
             }
-            return NotFound(id);
-        }
-
-        // POST api/<MaintenanceSpecificationsApiEndpoint>
-        [HttpPost]
-        public IActionResult Post(MaintenanceSpecification ms)
-        {
-            _unitOfWork.MaintenanceSpecifications.Add(ms);
-            _unitOfWork.Complete();
             return Ok(ms);
         }
 
-        // PUT api/<MaintenanceSpecificationsApiEndpoint>/5
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, MaintenanceSpecification ms)
+        // GET: api/MaintenanceSpecificationsApiEndpoint/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<MaintenanceSpecification>> GetMaintenanceSpecification(int id)
         {
-            if (MaintenanceSpecificationExists(id))
+            var ms = await _unitOfWork.MaintenanceSpecifications.FindAsync(id);
+
+            if (ms == null)
             {
-                _unitOfWork.MaintenanceSpecifications.Update(ms);
-                _unitOfWork.Complete();
-                return Ok(ms);
+                return NotFound();
             }
-            return NotFound(id);
+
+            return ms;
         }
 
-
-        // DELETE api/<MaintenanceSpecificationsApiEndpoint>/5
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        // PUT: api/MaintenanceSpecificationsApiEndpoint/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutMaintenanceSpecification(int id, MaintenanceSpecification ms)
         {
-            if (MaintenanceSpecificationExists(id))
+            if (id != ms.MaintenanceSpecificationId)
             {
-                _unitOfWork.MaintenanceSpecifications.Remove(_unitOfWork.MaintenanceSpecifications.GetById(id));
-                _unitOfWork.Complete();
+                return BadRequest();
+            }
+
+            _unitOfWork.MaintenanceSpecifications.UpdateAsync(ms);
+
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!MaintenanceSpecificationExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("Description/{id}")]
+        public async Task<IActionResult> PutMaintenanceSpecification(int id, [FromBody] string description)
+        {
+            MaintenanceSpecification ms = _unitOfWork.MaintenanceSpecifications.Find(id);
+
+            if (description == ms.Description)
+            {
                 return NoContent();
             }
-            return NotFound(id);
+
+            ms.Description = description;
+
+            _unitOfWork.MaintenanceSpecifications.UpdateAsync(ms);
+
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!MaintenanceSpecificationExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok(ms);
+        }
+
+        // POST: api/MaintenanceSpecificationsApiEndpoint
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost]
+        public async Task<ActionResult<MaintenanceSpecification>> PostMaintenanceSpecification(MaintenanceSpecification ms)
+        {
+            _unitOfWork.MaintenanceSpecifications.Add(ms);
+            await _unitOfWork.CompleteAsync();
+
+            return CreatedAtAction("GetMaintenanceSpecification", new { id = ms.MaintenanceSpecificationId }, ms);
+        }
+
+        // DELETE: api/MaintenanceSpecificationsApiEndpoint/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<MaintenanceSpecification>> DeleteMaintenanceSpecification(int id)
+        {
+            var ms = await _unitOfWork.MaintenanceSpecifications.FindAsync(id);
+            if (ms == null)
+            {
+                return NotFound();
+            }
+
+            _unitOfWork.MaintenanceSpecifications.Remove(ms);
+            await _unitOfWork.CompleteAsync();
+
+            return ms;
         }
 
         private bool MaintenanceSpecificationExists(int id)
         {
-            return _unitOfWork.MaintenanceSpecifications.GetById(id) != null;
+            return _unitOfWork.MaintenanceSpecifications.Find(id) != null;
         }
     }
 }

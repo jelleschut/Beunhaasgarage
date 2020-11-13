@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
@@ -13,6 +14,7 @@ namespace Core.Interfaces
         IModelRepository Models { get; }
 
         int Complete();
+        Task<int> CompleteAsync();
 
     }
 }

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Interfaces;
-using Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore;
+using Core.Models;
+using DataAccessLayer;
+using Core.Interfaces;
+using Newtonsoft.Json;
 
 namespace Web.Controllers.ApiControllers
 {
@@ -15,101 +17,119 @@ namespace Web.Controllers.ApiControllers
     public class ModelsApiEndpoint : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+
         public ModelsApiEndpoint(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        // GET: api/<ModelsController>
+        // GET: api/ModelsApiEndpoint
         [HttpGet]
-        public IActionResult Get()
+        public async Task<ActionResult<IEnumerable<Model>>> GetModels()
         {
-            var result = _unitOfWork.Models.GetAll();
-            return Ok(result);
+            var models = await _unitOfWork.Models.GetAllAsync();
+            if (models == null)
+            {
+                return NotFound();
+            }
+            return Ok(models);
         }
 
-        // GET api/<ModelsController>/5
+        // GET: api/ModelsApiEndpoint/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<ActionResult<Model>> GetModel(int id)
         {
-            if (ModelExists(id))
+            var model = await _unitOfWork.Models.FindAsync(id);
+
+            if (model == null)
             {
-                var result = _unitOfWork.Models.GetById(id);
-                return Ok(result);
+                return NotFound();
             }
-            return NotFound(id);
+
+            return model;
         }
 
-        // GET api/<ModelsController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        // POST api/<ModelsController>
-        [HttpPost]
-        public IActionResult Post(Brand brand)
-        {
-            _unitOfWork.Brands.Add(brand);
-            _unitOfWork.Complete();
-            return Ok(brand);
-        }
-
-        // POST api/<ModelsController>
-        //[HttpPost]
-        //public void Post([FromBody] Model model)
-        //{
-        //    _modelRepository.EditModel(model.Id, model);
-        //}
-
-        // PUT api/<ModelsController>/5
+        // PUT: api/ModelsApiEndpoint/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Model model)
+        public async Task<IActionResult> PutModel(int id, Model model)
         {
-            if (ModelExists(id))
+            if (id != model.ModelId)
             {
-                _unitOfWork.Models.Update(model);
-                _unitOfWork.Complete();
-                return Ok(model);
+                return BadRequest();
             }
-            return NotFound(id);
+
+            _unitOfWork.Models.UpdateAsync(model);
+
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ModelExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // PUT api/<ModelsController>/5/name
-        //[HttpPut("{id}/{modelName}")]
-        //public void Put(int id, string modelName)
-        //{
-        //    _modelRepository.EditModel(id, modelName);
-        //}
-
-
-        // PUT api/<ModelsController>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromForm] Model model)
-        //{
-        //    if (ModelExists(id))
-        //    {
-        //        _modelRepository.EditModel(id, model);
-        //    }
-        //}
-
-        // DELETE api/<ModelsController>/5
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        // POST: api/ModelsApiEndpoint
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost]
+        public async Task<ActionResult<Model>> PostModel([Bind("modelId,Name")] Model model)
         {
-            if (ModelExists(id))
+            Brand brand = _unitOfWork.Brands.Find(model.Brand.BrandId);
+            model.Brand = brand;
+
+            _unitOfWork.Models.Add(model);
+            await _unitOfWork.CompleteAsync();
+
+            return CreatedAtAction("GetModel", new { id = model.ModelId }, model);
+        }
+
+        // DELETE: api/ModelsApiEndpoint/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Model>> DeleteModel(int id)
+        {
+            var model = await _unitOfWork.Models.FindAsync(id);
+            if (model == null)
             {
-                _unitOfWork.Models.Remove(_unitOfWork.Models.GetById(id));
-                _unitOfWork.Complete();
-                return NoContent();
+                return NotFound();
             }
-            return NotFound(id);
+
+            _unitOfWork.Models.Remove(model);
+            await _unitOfWork.CompleteAsync();
+
+            return model;
+        }
+
+        [HttpPost("GetModelByBrand/")]
+        public JsonResult GetModelsByBrand(int id)
+        {
+            try
+            {
+                List<Model> models = _unitOfWork.Models.Where(m => m.Brand.BrandId == id).ToList();
+
+                return new JsonResult(new { ok = true, data = models, message = "ok" });
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { ok = false, message = ex.Message });
+            }
         }
 
         private bool ModelExists(int id)
         {
-            return _unitOfWork.Models.GetById(id) != null;
+            return _unitOfWork.Models.Find(id) != null;
         }
     }
 }

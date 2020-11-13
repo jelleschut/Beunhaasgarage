@@ -12,6 +12,8 @@ namespace DataAccessLayer.Configuration
     {
         public void Configure(EntityTypeBuilder<Owner> builder)
         {
+            builder.HasKey(o => o.OwnerId);
+
             builder.Property(o => o.OwnerId)
                 .ValueGeneratedOnAdd();
 

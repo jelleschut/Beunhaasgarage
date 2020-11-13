@@ -1,0 +1,102 @@
+﻿@model Core.Models.Car
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="row">
+    <div class="col-4">
+        <h1>Car</h1>
+    </div>
+    <div class="offset-7 col-1">
+        <a class="btn btn-dark" asp-action="Index" asp-route-type="">Back</a>
+    </div>
+</div>
+
+<form asp-action="Create">
+    <div class="navbar navbar-form navbar-expand-sm bg-dark border box-shadow rounded flex-row justify-content-between">
+        <div class="col-md-2 navbar-brand text-light"><b>New</b></div>
+        <div class=" btn-group non-editable pr-3">
+            <input type="submit" value="Create" class="btn btn-success" />
+        </div>
+    </div>
+    <div class="container pt-3 border border-top-0 rounded-bottom">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-row">
+            <div class="col-md-4">
+                <label asp-for="LicenseNumber" class="control-label"></label>
+                <div class="input-group">
+                    <input asp-for="LicenseNumber" class="form-control" />
+                    <div class="input-group-append"></div>
+                </div>
+                <span asp-validation-for="LicenseNumber" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-5">
+                <label asp-for="Model.Brand" class="control-label"></label>
+                <div class="input-group">
+                    <select id="brand-select"
+                            class="custom-select"
+                            asp-for="Model.Brand.BrandId"
+                            asp-items="@ViewBag.BrandId">
+                    </select>
+                    <div class="input-group-append">
+                        <button id="new-brand-btn" class="btn btn-success" type="button">New</button>
+                    </div>
+                </div>
+            </div>
+            <span asp-validation-for="Model.Brand" class="text-danger"></span>
+
+            <div class="offset-md-1 col-md-5">
+                <label asp-for="Model" class="control-label"></label>
+                <div class="input-group">
+                    <select id="model-select"
+                            class="custom-select"
+                            asp-for="Model.ModelId"
+                            asp-items="@ViewBag.ModelId">
+                    </select>
+                    <div class="input-group-append">
+                        <button id="new-model-btn" class="btn btn-success" type="button">New</button>
+                    </div>
+                </div>
+            </div>
+            <span asp-validation-for="Model" class="text-danger"></span>
+        </div>
+
+        <div class="form-row mb-3">
+            <div class="col-md-4">
+                <label asp-for="Owner" class="control-label"></label>
+                <div class="input-group">
+                    <select id="owner-select"
+                            class="custom-select"
+                            asp-for="Owner.OwnerId"
+                            asp-items="@ViewBag.OwnerId">
+                    </select>
+                    <div class="input-group-append">
+                    </div>
+                </div>
+            </div>
+            <span asp-validation-for="Owner" class="text-danger"></span>
+
+            <div class="offset-md-2 col-md-4">
+                <label asp-for="Driver" class="control-label"></label>
+                <div class="input-group">
+                    <select id="driver-select"
+                            class="custom-select "
+                            asp-for="Driver.OwnerId"
+                            asp-items="@ViewBag.DriverId">
+                    </select>
+                    <div class="input-group-append">
+                    </div>
+                </div>
+            </div>
+            <span asp-validation-for="Driver" class="text-danger"></span>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

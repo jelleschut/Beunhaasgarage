@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Core.Interfaces
 {
-    public interface IBrandRepository : IGenericRepository<Brand>
+    public interface IBrandRepository : IGenericRepository<Brand>, IAsyncGenericRepository<Brand>
     {
     }
 }
